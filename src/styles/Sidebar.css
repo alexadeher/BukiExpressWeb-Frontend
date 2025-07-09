@@ -1,0 +1,346 @@
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: white;
+    color: #25316D;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    transition: width 0.3s ease, transform 0.3s ease;
+    flex-shrink: 0;
+    z-index: 1000;
+}
+
+/* Estilo para el sidebar colapsado */
+.sidebar.collapsed {
+    width: 60px;
+}
+
+/* Estilos para dispositivos móviles */
+.sidebar.mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-header {
+    padding: 0 1.5rem 1.5rem;
+    transition: padding 0.3s ease;
+    position: relative;
+}
+
+.sidebar.collapsed .sidebar-header {
+    padding: 1rem 0.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+/* Estilos para el logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-image {
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.collapse-button {
+    background: none;
+    border: none;
+    color: #25316D;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.collapse-button:hover {
+    opacity: 1;
+}
+
+.expand-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.expand-button:hover {
+    background-color: #ffffff1a;
+}
+
+/* Botón para cerrar el sidebar en móviles */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #25316D;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.close-button:hover {
+    background-color: #ffffff1a;
+}
+
+.sidebar-divider {
+    border: none;
+    height: 0.12rem;
+    background-color: #848484; 
+    margin: 0.9rem 1.5rem; /* espacio lateral como el título */
+}
+
+
+.sidebar-section {
+    margin-bottom: 1.5rem;
+    transition: margin 0.3s ease;
+}
+
+.section-title {
+    color: #848484;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0 1.5rem;
+    margin-bottom: 0.5rem;
+    transition: padding 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar.collapsed .section-title {
+    padding: 0 0.5rem;
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 0 1rem;
+    transition: padding 0.3s ease;
+}
+
+.sidebar.collapsed .sidebar-footer {
+    padding: 0 0.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.logout-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: white;
+    color: #25316D;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s, padding 0.3s ease;
+}
+
+.logout-button.collapsed {
+    padding: 0.75rem;
+    justify-content: center;
+}
+
+.logout-button:hover {
+    background-color: #f5f5f5;
+}
+
+/* Media queries para responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 250px; /* Siempre ancho completo en móviles */
+    }
+
+    .sidebar.collapsed {
+        width: 250px; /* No colapsar en móviles */
+    }
+
+    .sidebar.collapsed .section-title {
+        opacity: 1;
+        height: auto;
+        padding: 0 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar-item.collapsed .sidebar-text {
+        display: block;
+    }
+
+    .logout-button.collapsed {
+        padding: 0.75rem 1rem;
+        justify-content: flex-start;
+    }
+
+    .logout-button.collapsed span {
+        display: block;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .sidebar {
+        width: 60px; /* Colapsar por defecto en tablets */
+    }
+
+    .sidebar .section-title {
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .sidebar-item .sidebar-text {
+        display: none;
+    }
+
+    .logout-button {
+        padding: 0.75rem;
+        justify-content: center;
+    }
+
+    .logout-button span {
+        display: none;
+    }
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* Modal */
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Botones */
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Botón confirmar */
+.confirm-button {
+    background-color: #25316D;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid #25316D;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.confirm-button:hover {
+    background-color: #39405C;
+    border-color: #39405C;
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.confirm-button:active {
+    background-color: #0d47a1;
+    border-color: #0d47a1;
+    transform: translateY(2px); /* Slight depression on click */
+}
+
+.confirm-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(13, 71, 161, 0.4); /* Add focus outline for accessibility */
+}
+
+/* Botón cancelar */
+.cancel-button {
+    background-color: #7E7E7E;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid #7E7E7E;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.cancel-button:hover {
+    background-color: #757575;
+    border-color: #757575;
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.cancel-button:active {
+    background-color: #ffffff;
+    border-color: #90a4ae;
+    transform: translateY(2px); /* Slight depression on click */
+}
+
+.cancel-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(169, 169, 169, 0.4); /* Add focus outline for accessibility */
+}
