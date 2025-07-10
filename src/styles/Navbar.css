@@ -1,0 +1,67 @@
+.navbar-appbar {
+    background-color: #39405C;
+    padding: 0 16px;
+    box-shadow: none;
+}
+
+.navbar-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar-logo {
+    height: 40px;
+}
+/*
+.navbar-title {
+    font-weight: bold;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+}
+
+.bukiblue {
+    color: #7EC8FF;
+}
+
+.expresswhite {
+    color: white;
+}*/
+
+.navbar-links {
+    display: flex;
+    gap: 32px;
+}
+
+.navbar-link {
+    color: white;
+    text-transform: none;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.navbar-link:hover {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+.navbar-button {
+    background-color: #71C3F3;
+    color: white;
+    text-transform: none;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 6px 16px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-button:hover {
+    background-color: #5bb6ef;
+}
