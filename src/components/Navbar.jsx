@@ -15,7 +15,7 @@ const Navbar = () => {
 
             {/* Enlaces */}
             <Box className="navbar-links"sx={{display: 'flex', gap: '32px'}}>
-                <Button component={RouterLink} to="/" sx={{color: 'white', textTransform: 'none', fontWeight: 500, fontSize: '16px'}}>Inicio</Button>
+                <Button component={RouterLink} to="/home" sx={{color: 'white', textTransform: 'none', fontWeight: 500, fontSize: '16px'}}>Inicio</Button>
                 <Button component={RouterLink} to="/socios" sx={{color: 'white', textTransform: 'none', fontWeight: 500, fontSize: '16px'}}>Socios</Button>
                 <Button component={RouterLink} to="/repartidores" sx={{color: 'white', textTransform: 'none', fontWeight: 500, fontSize: '16px'}}>Repartidores</Button>
             </Box>

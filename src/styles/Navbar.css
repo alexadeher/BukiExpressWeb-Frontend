@@ -2,6 +2,7 @@
     background-color: #39405C;
     padding: 0 16px;
     box-shadow: none;
+    font-family: 'Arial', sans-serif;
 }
 
 .navbar-toolbar {
@@ -19,21 +20,6 @@
 .navbar-logo {
     height: 40px;
 }
-/*
-.navbar-title {
-    font-weight: bold;
-    font-style: italic;
-    display: flex;
-    align-items: center;
-}
-
-.bukiblue {
-    color: #7EC8FF;
-}
-
-.expresswhite {
-    color: white;
-}*/
 
 .navbar-links {
     display: flex;

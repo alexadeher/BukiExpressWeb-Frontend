@@ -1,4 +1,6 @@
 import Navbar from "./Navbar.jsx";
+import SiteFooter from "./SiteFooter.jsx";
+import React from "react";
 import { Outlet } from "react-router-dom";
 
 const SiteLayout = () => {
@@ -8,6 +10,9 @@ const SiteLayout = () => {
             <main>
                 <Outlet />
             </main>
+            <footer>
+                <SiteFooter />
+            </footer>
         </div>
     );
 }
