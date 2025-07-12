@@ -1,6 +1,6 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { Box, Typography, Grid, Button, Card, CardMedia, CardContent, CardActions, Link } from "@mui/material";
+import { Box, Typography, Grid, Button, Card, CardMedia, CardContent, Link } from "@mui/material";
 import "../../styles/Site.css"
 import { Looks5, Send, ThumbUpAlt, LocalShipping, Fastfood, LocalLaundryService, Description, ShoppingCart, Payment } from "@mui/icons-material";
 import AcercaDe from "../../assets/AboutSection.png";
@@ -29,7 +29,7 @@ const Home = () => {
       {/* Experiencia/envíos */}
       <Box className="feature-box">
         <Grid container spacing={24} justifyContent="center">
-          <Grid item xs={12} md={4}>
+          <Grid>
             <Box display="flex" flexDirection="column" alignItems="center">
               {/* Ícono */}
               <Box className="icon-section" mb={1}>
@@ -43,7 +43,7 @@ const Home = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid>
             <Box display="flex" flexDirection="column" alignItems="center">
               {/* Ícono */}
               <Box className="icon-section" mb={1}>
@@ -57,7 +57,7 @@ const Home = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid>
             <Box display="flex" flexDirection="column" alignItems="center">
               {/* Ícono */}
               <Box className="icon-section" mb={1}>
@@ -106,7 +106,7 @@ const Home = () => {
         <Box className="services-body">
           <Grid container spacing={4} justifyContent="center" sx={{ display: 'flex', justifyContent: 'center' }}>
             {services.map((service, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+              <Grid key={index}>
                 <Card className="services-card">
                   <CardContent>
                     <Box display="flex" flexDirection="column" alignItems="center">
@@ -148,7 +148,7 @@ const Home = () => {
         <Box className="join-body">
           <Grid container spacing={2}>
             {/* Card: Repartidor */}
-            <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
               <Card sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
                 <CardMedia
                   component="img"
@@ -185,7 +185,7 @@ const Home = () => {
             </Grid>
 
             {/* Card: Socio */}
-            <Grid item xs={12} md={6}>
+            <Grid>
               <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <CardMedia
                   component="img"
