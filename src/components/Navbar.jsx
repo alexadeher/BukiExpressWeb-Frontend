@@ -1,7 +1,7 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { AppBar, Toolbar, Box, Button } from "@mui/material";
-import logo from "../assets/logoHorizontal.png"; // Adjust the path as necessary
+import logo from "../assets/logoHorizontal.png"; 
 import "../styles/Navbar.css";
 
 const Navbar = () => {
@@ -10,7 +10,7 @@ const Navbar = () => {
         <Toolbar sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
             {/* Logo */}
             <Box className="navbar-logo-container">
-            <img src={logo}alt="Logo" className="navbar-logo" />
+                <img src={logo}alt="Logo" className="navbar-logo" />
             </Box>
 
             {/* Enlaces */}

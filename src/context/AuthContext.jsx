@@ -8,6 +8,14 @@ export const AuthProvider = ({ children }) => {
   // Puedes cambiar esto a null si quieres simular que no hay sesión iniciada
   const [user, setUser] = useState(null); // ← null = rutas públicas, objeto = rutas privadas
 
+    // Simula que hay una sesión iniciada
+  /*const [user, setUser] = useState({
+    id: 1,
+    name: 'Juan Pérez',
+    email: 'juan@example.com',
+    role: 'administrador',
+  });*/
+
   const [error, setError] = useState(null);
 
   return (

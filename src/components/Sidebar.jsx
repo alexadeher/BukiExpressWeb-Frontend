@@ -1,4 +1,4 @@
-"use client";
+
 // Importar dependencias necesarias
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
