@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Typography, Grid, Button, TextField } from "@mui/material";
-import "../../styles/Site.css"
+import "../styles/Site.css"
 import { BarChart, MoneyOff, Campaign, Info } from "@mui/icons-material";
-import SocioSection from "../../assets/SocioSection.png";
+import SocioSection from "../assets/SocioSection.png";
 
 const Socios = () => {
   return (

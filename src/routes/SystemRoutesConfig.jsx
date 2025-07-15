@@ -1,8 +1,8 @@
 import { Routes, Route } from "react"
 
 import SystemLayout from "../components/SystemLayout";
-import Dashboard from "../pages/system/Dashboard";
-import Repartidores from "../pages/system/Repartidores";
+import Dashboard from "../pages/Dashboard";
+import Repartidores from "../pages/GestionRepartidores";
 
 export const SystemRoutesConfig = () => {
     console.log("Repartidores:", Repartidores);

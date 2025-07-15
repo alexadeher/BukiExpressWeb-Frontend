@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {Box, Button, TextField, Typography, InputAdornment, IconButton, Link} from '@mui/material';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import FondoForm from "../../assets/welcomeLogin.png";
-import Fondo from "../../assets/welcomeBackground.png";
-import Logo from "../../assets/logoHorizontalSombra.png"
+import FondoForm from "../assets/welcomeLogin.png";
+import Fondo from "../assets/welcomeBackground.png";
+import Logo from "../assets/logoHorizontalSombra.png"
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -84,7 +84,7 @@ const Login = () => {
                             <Typography variant="body2" sx={{color: '#39405C'}}>
                             ¿Nuevo usuario?{' '}
                             <Link href="/registro" underline='hover'>
-                                Crear
+                                Crear cuenta
                             </Link>
                             </Typography>
                         </Box>

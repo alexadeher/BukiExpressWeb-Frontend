@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import {Box, Button, TextField, MenuItem, Typography, InputAdornment, IconButton, Link} from '@mui/material';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import FondoForm from "../../assets/welcomeLogin.png";
-import Fondo from "../../assets/welcomeBackground.png";
-import Logo from "../../assets/logoHorizontalSombra.png"
+import FondoForm from "../assets/welcomeLogin.png";
+import Fondo from "../assets/welcomeBackground.png";
+import Logo from "../assets/logoHorizontalSombra.png"
 
 const Registro = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -115,9 +115,9 @@ const Registro = () => {
                             </Box>
                             <Box textAlign="center" mt={2}>
                                 <Typography variant="body2" sx={{color: '#39405C'}}>
-                                ¿Nuevo usuario?{' '}
+                                ¿Ya tienes cuenta?{' '}
                                 <Link href="/login" underline='hover'>
-                                    Crear
+                                    Inicia sesión
                                 </Link>
                                 </Typography>
                             </Box>

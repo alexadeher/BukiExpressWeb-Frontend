@@ -1,9 +1,9 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material";
-import "../../styles/Site.css"
-import RepartidorSection from "../../assets/RepartidorSection.png";
-import RepartidorBenefits from "../../assets/RepartidorBenefits.png";
+import "../styles/Site.css"
+import RepartidorSection from "../assets/RepartidorSection.png";
+import RepartidorBenefits from "../assets/RepartidorBenefits.png";
 import { EighteenUpRating, PinDrop, Backpack, Moped } from "@mui/icons-material";
 
 const requirements = [

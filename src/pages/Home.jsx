@@ -1,11 +1,11 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Box, Typography, Grid, Button, Card, CardMedia, CardContent, Link } from "@mui/material";
-import "../../styles/Site.css"
+import "../styles/Site.css"
 import { Looks5, Send, ThumbUpAlt, LocalShipping, Fastfood, LocalLaundryService, Description, ShoppingCart, Payment } from "@mui/icons-material";
-import AcercaDe from "../../assets/AboutSection.png";
-import RepartidorCard from "../../assets/RepartidorCard.png";
-import SocioCard from "../../assets/SocioCard.png";
+import AcercaDe from "../assets/AboutSection.png";
+import RepartidorCard from "../assets/RepartidorCard.png";
+import SocioCard from "../assets/SocioCard.png";
 
 const services = [
   { label: "Alimentos", icon: <Fastfood sx={{ color: 'white', fontSize: 45 }} /> },

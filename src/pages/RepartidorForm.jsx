@@ -3,9 +3,9 @@ import {
   Box, Typography, Stepper, Step, StepButton, TextField,
   Button, RadioGroup, Radio, FormControlLabel, FormControl, FormLabel, MenuItem, Dialog, DialogTitle, DialogContent, ImageList, ImageListItem
 } from '@mui/material';
-import "../../styles/Site.css";
-import FileInput from "../../components/FileInput";
-import ModalAvisoPrivacidad from '../../components/ModalAvisoPrivacidad.jsx';
+import "../styles/Site.css";
+import FileInput from "../components/FileInput.jsx";
+import ModalAvisoPrivacidad from '../components/ModalAvisoPrivacidad.jsx';
 
 const steps = ['Información personal', 'Documentación', 'Horario'];
 

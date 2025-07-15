@@ -26,9 +26,6 @@ const NotFoundPage = () => {
         <Typography variant="body1" sx={{ mb: 3 }}>
             Lo sentimos, la página que buscas no existe.
         </Typography>
-        <Button variant="contained" onClick={() => navigate('/')}>
-            Volver al inicio
-        </Button>
         </Box>
     );
 };
