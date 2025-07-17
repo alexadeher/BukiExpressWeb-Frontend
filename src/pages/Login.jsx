@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
 import {Box, Button, TextField, Typography, InputAdornment, IconButton, Link} from '@mui/material';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import FondoForm from "../assets/welcomeLogin.png";
@@ -7,7 +9,31 @@ import Fondo from "../assets/welcomeBackground.png";
 import Logo from "../assets/logoHorizontalSombra.png"
 
 const Login = () => {
+    const [correo, setCorreo] = useState("");
+    const [password, setPassword] = useState("");
+    const {handleLogin} = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+
+    const handleCorreoChange = (e) => {
+        setCorreo(e.target.value);
+    };
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+    };
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Formulario enviado con:", { correo, password });
+    await handleLogin(correo, password);
+    const token = localStorage.getItem("jwt");
+    if (token) {
+        navigate("/home"); // Redirige solo si hay token
+    } else {
+        toast.error("Error: Usuario o contraseña incorrectos.");
+    }
+    };
 
     const handleTogglePassword = () => {
         setShowPassword((prev) => !prev);
@@ -30,7 +56,7 @@ const Login = () => {
                 {/* Lado derecho: Formulario */}
                 <Box sx={{backgroundColor: 'white', flex: 1, display: 'flex', 
                     justifyContent: 'center', alignItems: 'center', px: 4 }}>
-                    <Box sx={{ width: '100%', maxWidth: 400 }}>
+                    <Box component='form' onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: 400 }}>
                         <Box display="flex" justifyContent="center" mb={2}>
                             <img src={Logo}alt="Logo" style={{width: '16rem'}} />
                         </Box>
@@ -49,6 +75,8 @@ const Login = () => {
                             fullWidth
                             margin="normal"
                             type="email"
+                            value={correo}
+                            onChange={handleCorreoChange}
                         />
                         <TextField
                             required
@@ -57,6 +85,8 @@ const Login = () => {
                             placeholder="••••••••"
                             fullWidth
                             margin="normal"
+                            value={password}
+                            onChange={handlePasswordChange}
                             type={showPassword ? 'text' : 'password'}
                             InputProps={{
                             endAdornment: (
@@ -69,7 +99,7 @@ const Login = () => {
                             }}
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                            <Button component={RouterLink} to="/dashboard" variant="contained"
+                            <Button type="submit" variant="contained"
                                 sx={{backgroundColor: '#25316D', color: 'white', py: 1.5, textTransform: 'none', 
                                     width: '10rem', borderRadius: '60px', fontSize: '16px', 
                                     '&:hover': {
@@ -83,7 +113,11 @@ const Login = () => {
                         <Box textAlign="center" mt={2}>
                             <Typography variant="body2" sx={{color: '#39405C'}}>
                             ¿Nuevo usuario?{' '}
-                            <Link href="/registro" underline='hover'>
+                            <Link 
+                                component="button" 
+                                onClick={() => navigate('/registro')} 
+                                underline='hover'
+                                sx={{ cursor: 'pointer' }}>
                                 Crear cuenta
                             </Link>
                             </Typography>
@@ -91,6 +125,7 @@ const Login = () => {
                     </Box>
                 </Box>
             </Box>
+            <ToastContainer/>
         </Box>
     );
 };

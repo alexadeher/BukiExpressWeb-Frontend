@@ -95,7 +95,7 @@ const Registro = () => {
                                 margin="normal"
                             >                        
                                 <MenuItem value="" disabled></MenuItem>
-                                {['Administrador'].map((i) => (
+                                {['Administrador', 'Personal'].map((i) => (
                                 <MenuItem key={i} value={i.toLowerCase()}>{i}</MenuItem>
                                 ))}
                             </TextField>
