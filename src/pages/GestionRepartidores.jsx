@@ -9,7 +9,7 @@ const GestionRepartidores = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [searchQuery, setSearchQuery] = useState("");
-    const [statusFilter, setStatusFilter] = useState("active");
+    const [statusFilter, setStatusFilter] = useState("all");
 
     useEffect(() => {
         let filtered = repartidores.filter((repartidor) =>

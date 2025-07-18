@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Box, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
-import { Search, Add, Edit, Close } from "@mui/icons-material";
-import { getUsuarios, crearUsuario, changeStatus } from "../api/usuarios";
+import { Search, Add, Edit, Close, ArrowBack } from "@mui/icons-material";
+import { getUsuarios, crearUsuario, changeStatus, editUsuario } from "../api/usuarios";
 import Logo from "../assets/logoHorizontal.png";
 
 const GestionUsuarios = () => {
@@ -12,10 +12,12 @@ const GestionUsuarios = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [searchQuery, setSearchQuery] = useState("");
-    const [statusFilter, setStatusFilter] = useState("active");
+    const [statusFilter, setStatusFilter] = useState("all");
 
-    // Estados para agregar usuario
+    // Estados para agregar/editar usuario
     const [openAddModal, setOpenAddModal] = useState(false);
+    const [currentUsuario, setCurrentUsuario] = useState(null)
+
     const [nombre, setNombre] = useState("");
     const [apellidos, setApellidos] = useState("");
     const [correo, setCorreo] = useState("");
@@ -29,10 +31,24 @@ const GestionUsuarios = () => {
     const [openDetailsModal, setOpenDetailsModal] = useState(false);
     const [selectedOne, setSelectedOne] = useState(null);
 
+
+    // Drawer - traducir rol
+    const traducirRol = (rol) => {
+        switch (rol) {
+            case 'ROLE_ADMIN_ACCESS':
+            return 'Administrador';
+            case 'ROLE_PERSONAL_ACCESS':
+            return 'Personal';
+            default:
+            return rol;
+        }
+    };
+
+
     useEffect(() => {
         const fetchUsuarios = async () => {
         try {
-            const response = await getUsuarios(); // Use the imported API function
+            const response = await getUsuarios();
             const newData = response.data.result;
 
             if (JSON.stringify(newData) !== JSON.stringify(usuarios)) {
@@ -66,6 +82,8 @@ const GestionUsuarios = () => {
     useEffect(() => {
         let filtered = usuarios.filter((usuario) =>
             usuario.nombre.toLowerCase().includes(searchQuery.toLowerCase())
+            || usuario.apellidos.toLowerCase().includes(searchQuery.toLowerCase())
+            || usuario.correo.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
         if (statusFilter !== "all") {
@@ -87,23 +105,36 @@ const GestionUsuarios = () => {
         setPage(0);
     };
 
-      // Manejar modal de agregar usuario
-    const handleAddUsuario = () => {
-        setOpenAddModal(true);
-    };
-
-    const handleCloseAddModal = () => {
-        setOpenAddModal(false);
-        resetForm();
-    };
-
-      // Resetear formulario
     const resetForm = () => {
         setNombre("");
         setApellidos("");
         setCorreo("");
-        setContrasena("");
         setRol("");
+        setContrasena("");
+    };
+
+
+      // Manejar modal de agregar/editar usuario
+    const handleOpenModalUsuario = (usuario = null) => {
+        setCurrentUsuario(usuario);
+        if (usuario) {
+            // Editar
+            setNombre(usuario.nombre);
+            setApellidos(usuario.apellidos);
+            setCorreo(usuario.correo);
+            setRol("");
+            setContrasena(""); // Deshabilitado, pero limpiamos igual
+        } else {
+            // Agregar nuevo
+            resetForm();
+        }
+        setOpenAddModal(true);
+    };
+
+    const handleCloseModalUsuario = () => {
+        setOpenAddModal(false);
+        setCurrentUsuario(null);
+        resetForm();
     };
 
     // Enviar formulario
@@ -112,24 +143,31 @@ const GestionUsuarios = () => {
         setIsLoading(true);
 
         try {
-        var response = await crearUsuario(nombre, apellidos, correo, contrasena, rol);
-        console.log("Respuesta de la API:", response);
+            let response;
 
-        if (response.type === "ERROR") {
-            toast.error(response.text);
-        } else if (response.type === "SUCCESS") {
-            toast.success(response.text);
-        } else if (response.type === "WARNING") {
-            toast.warning(response.text);
-        }
+            if (currentUsuario) {
+                 // Modo editar
+                response = await editUsuario({
+                    id: currentUsuario.id,
+                    nombre,
+                    apellidos,
+                    correo,
+                    rol
+                });
+            } else {
+                // Modo agregar
+                response = await crearUsuario(nombre, apellidos, correo, contrasena, rol);
+            }
+            
+            //console.log("Respuesta de la API:", response);
 
-        setOpenAddModal(false);
-        setNombre("");
-        setApellidos("");
-        setCorreo("");
-        setContrasena("");
-        setRol("");
-
+            if (response.type === "ERROR") {
+                toast.error(response.text);
+            } else if (response.type === "SUCCESS") {
+                toast.success(response.text);
+            } else if (response.type === "WARNING") {
+                toast.warning(response.text);
+            }
         } catch (error) {
             toast.error(error.response?.data?.message || "Error al crear usuario");
             console.error("Error al crear usuario:", error);
@@ -138,9 +176,9 @@ const GestionUsuarios = () => {
         }
     };
 
-          // Manejar modal de detalles del usuario
-    const handleOpenModal = (socio) => {
-        setSelectedOne(socio);
+    // Manejar modal de detalles del usuario
+    const handleOpenModal = (usuario) => {
+        setSelectedOne(usuario);
         setOpenDetailsModal(true);
     };
 
@@ -228,7 +266,7 @@ const GestionUsuarios = () => {
                 <Typography variant="h5" sx={{align:'left', fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: 30, color: '#25316D'}}>Usuarios</Typography>
                 <Button
                     variant="contained"
-                    onClick={handleAddUsuario}
+                    onClick={() => handleOpenModalUsuario(null)}
                     sx={{
                         display: "flex",
                         alignItems: "center",
@@ -240,7 +278,7 @@ const GestionUsuarios = () => {
                     }}
                 >
                 <Add sx={{ marginRight: "8px" }} />
-                Nuevo usuario
+                {currentUsuario ? "Editar usuario" : "Nuevo usuario"}
                 </Button>
             </Box>
             {/* Tabla de gestón de responsbales */}
@@ -292,6 +330,7 @@ const GestionUsuarios = () => {
                                         </TableCell>
                                         <TableCell sx={{ textAlign: 'center' }}>
                                             <IconButton
+                                                onClick={() => handleOpenModalUsuario(usuario)}
                                                 sx={{
                                                 backgroundColor: '#25316D',
                                                 color: 'white',
@@ -303,7 +342,7 @@ const GestionUsuarios = () => {
                                             </IconButton>
                                         </TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>
-                                            <Button sx={{
+                                            <Button  variant="contained" onClick={() => handleOpenModal(usuario)} sx={{
                                                 backgroundColor: '#25316D',
                                                 color: 'white',
                                                 borderRadius: '20px',
@@ -339,7 +378,7 @@ const GestionUsuarios = () => {
             {/* Modal para agregar nuevo usuario */}
             <Dialog
                 open={openAddModal}
-                onClose={handleCloseAddModal}
+                onClose={handleCloseModalUsuario}
                 maxWidth='sm'
                 fullWidth  
                 sx={{
@@ -350,10 +389,10 @@ const GestionUsuarios = () => {
                 }}         
             >
                 <DialogTitle sx={{backgroundColor: '#25316D', color: 'white'}}>
-                    Agregar Usuario
+                    {currentUsuario ? "Editar usuario" : "Nuevo usuario"}
                     <IconButton
                         aria-label='close'
-                        onClick={handleCloseAddModal}
+                        onClick={handleCloseModalUsuario}
                         sx={{position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500]}}
                     >
                         <Close/>
@@ -394,7 +433,8 @@ const GestionUsuarios = () => {
                             onChange={(e) => setCorreo(e.target.value)}
                             autoFocus
                         />
-                        <TextField
+                        {!currentUsuario && (
+                            <TextField
                             margin='normal'
                             required
                             fullWidth
@@ -405,7 +445,9 @@ const GestionUsuarios = () => {
                             value={contrasena}
                             onChange={(e) => setContrasena(e.target.value)}
                             autoFocus
-                        />
+                            />
+                        )}
+                        {!currentUsuario && (
                         <TextField
                             margin='normal'
                             select
@@ -422,13 +464,13 @@ const GestionUsuarios = () => {
                             <MenuItem value="ROLE_ADMIN_ACCESS">Administrador</MenuItem>
                             <MenuItem value="ROLE_PERSONAL_ACCESS">Personal</MenuItem>
                         </TextField>
+                        )}
 
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            color="primary"
-                            sx={{ mt: 3, mb: 2 }}
+                            sx={{mt: 3, mb: 2, backgroundColor: '#25316D', borderRadius: 5, width: '100%', textTransform: 'none', fontSize: '18px'}}
                             disabled={isLoading}
                         >
                             {isLoading ? <CircularProgress size={24} /> : "Guardar"}
@@ -446,8 +488,7 @@ const GestionUsuarios = () => {
                 sx: {
                 width: '100%',
                 maxWidth: 400,
-                height: '100%',
-                p: 3,
+                height: '100%', 
                 boxSizing: 'border-box',
                 backgroundColor: '#F5F5F5',
                 borderTopLeftRadius: 16,
@@ -476,16 +517,17 @@ const GestionUsuarios = () => {
                     </IconButton>
                     <Typography sx={{color: '#25316D'}}>Atrás</Typography>
                 </Box>
-                <Typography variant="h6" sx={{color: '#7E7E7E', fontWeight: 'bold', margin: 0.5}}>DETALLES</Typography>
-
-                <Box bgcolor="white" p={2} borderRadius={2} sx={{width: '22rem'}}>
+                <Box sx={{backgroundColor: '#EAEAEA', height: '100%'}}>
+                <Typography variant="h6" sx={{color: '#7E7E7E', fontWeight: 'bold', margin: 0.5, paddingLeft: 1}}>DETALLES</Typography>
+                <Box bgcolor="white" p={2} borderRadius={2} sx={{width: '24rem', margin: 1}}>
                     <Typography variant="h6" fontWeight="bold" color='#FF9149'>Información</Typography>
                     <ul style={{paddingLeft: 22}}>
                         <li>Nombre completo: {selectedOne.nombre} {selectedOne.apellidos}</li>
                         <li>Correo: {selectedOne.correo}</li>
-                        <li>Rol: {selectedOne.rol} </li>
+                        <li>Rol: {traducirRol(selectedOne.rol)} </li>
                         <li>Estado: {selectedOne.estado}</li>
                     </ul>
+                </Box>
                 </Box>
                 </>
             )}
@@ -493,8 +535,8 @@ const GestionUsuarios = () => {
 
             {/* Modal para cambiar el estado */}
             <Dialog open={openStatusModal} onClose={handleCloseStatusModal}>
-                <DialogTitle>
-                    Confirmar cambio de estado
+                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+                    Confirmación
                     <IconButton
                     aria-label="close"
                     onClick={handleCloseStatusModal}
@@ -502,30 +544,32 @@ const GestionUsuarios = () => {
                         position: "absolute",
                         right: 8,
                         top: 8,
-                        color: (theme) => theme.palette.grey[500],
+                        color: 'white',
                     }}
                     >
                     <Close />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Box sx={{ p: 2 }}>
-                    <Typography variant="body1" gutterBottom>
-                        ¿Estás seguro que deseas cambiar el estado del usuario: "
+                    <Box sx={{ p: 2.5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Typography variant="h6" sx={{color:'#25316D', fontWeight:'bold', paddingBottom: 1, textAlign: 'center'}}>
+                        ¿Deseas cambiar el estado del usuario: "
                         {selectedUsuario?.nombre}"?
                     </Typography>
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                    <Typography variant="body1" sx={{color: 'black', fontStyle: 'italic', paddingBottom: 2, textAlign: 'center'}}>
+                        El cambio de estado será aplicado automaticamente
+                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, paddingTop: 1.5}}>
                         <Button
                         onClick={handleCloseStatusModal}
-                        color="primary"
-                        sx={{ mr: 2 }}
+                        sx={{backgroundColor: '#7E7E7E', color: 'white', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
                         >
                         Cancelar
                         </Button>
                         <Button
                         onClick={handleChangeStatus}
-                        color="primary"
                         variant="contained"
+                        sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
                         >
                         Confirmar
                         </Button>

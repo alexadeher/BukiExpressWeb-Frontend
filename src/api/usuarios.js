@@ -22,7 +22,7 @@ export const crearUsuario = async (nombre, apellidos, correo, contrasena, rol) =
         const response = await api.post(`${endpoint}/guardar`, formData, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-                "Content-Type": "multipart/form-data",
+                "Content-Type": "application/json",
             },
         });
         return response.data;
@@ -31,6 +31,10 @@ export const crearUsuario = async (nombre, apellidos, correo, contrasena, rol) =
         console.error(error.response); 
         throw error;
     }
+};
+
+export const editUsuario = async (usuarioData) => {
+    return await api.put(`${endpoint}/actualizar`, usuarioData);
 };
 
 export const changeStatus = async (id) => {

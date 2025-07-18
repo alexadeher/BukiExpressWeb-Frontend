@@ -64,7 +64,7 @@ const Sidebar = ({ onClose }) => {
         localStorage.removeItem("user");
         localStorage.removeItem("jwt");
         localStorage.removeItem("expiration");
-        navigate("/login");
+        navigate("/");
         window.location.reload();
     };
 
@@ -149,7 +149,6 @@ const Sidebar = ({ onClose }) => {
             </div>
             <div className="sidebar-footer">
                 <Link 
-                    to="/#" 
                     className={`logout-button ${collapsed ? "collapsed" : ""}`}
                     onClick={openLogoutModal} // Abre el modal de confirmación de cierre de sesión
                 >
@@ -161,24 +160,16 @@ const Sidebar = ({ onClose }) => {
             {isModalOpen && (
             <div className="modal-overlay">
                 <div className="modal">
-                    <h2
-                    style={{
-                        fontSize: "18px",
-                        fontWeight: "600",
-                        color: "#0d47a1",
-                        marginBottom: "20px",
-                        textAlign: "center",
-                    }}
-                    >
-                    ¿Deseas cerrar sesión?
-                    </h2>
-                    <div className="modal-actions">
-                        <button onClick={handleLogout} className="confirm-button">
-                            Salir
-                        </button>
-                        <button onClick={closeLogoutModal} className="cancel-button">
-                            Cancelar
-                        </button>
+                    <div className="modal-header">
+                        <h2>Confirmación</h2>
+                    </div>
+                    <div className="modal-body">
+                        <h2>¿Deseas cerrar sesión?</h2>
+                        <p>Al cerrar sesión ya no podrás acceder al sistema</p>
+                        <div className="modal-actions">
+                            <button onClick={handleLogout} className="confirm-button">Salir</button>
+                            <button onClick={closeLogoutModal} className="cancel-button">Cancelar</button>
+                        </div>
                     </div>
                 </div>
             </div>

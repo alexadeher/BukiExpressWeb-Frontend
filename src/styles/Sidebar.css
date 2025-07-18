@@ -268,13 +268,51 @@
 /* Modal */
 .modal {
     background: white;
-    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     max-width: 400px;
     width: 100%;
+    overflow: hidden; 
 }
+
+.modal-header {
+    background-color: #25316D;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.modal-header h2 {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;     
+    width: 100%;    
+    text-align: center;
+}
+
+.modal-body h2 {
+    padding-bottom: 12px;
+    color: #25316D;
+    font-size: 20px;
+}
+
+.modal-body {
+    padding: 20px;
+    font-size: 15px;
+}
+
+.modal-body p {
+    color: black;
+    font-style: italic;
+}
+
 
 /* Botones */
 .modal-actions {
@@ -290,7 +328,8 @@
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 500;
-    border-radius: 8px;
+    border-radius: 5rem;
+    width: 7rem;
     border: 1px solid #25316D;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -321,7 +360,8 @@
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 500;
-    border-radius: 8px;
+    border-radius: 5rem;
+    width: 7rem;
     border: 1px solid #7E7E7E;
     cursor: pointer;
     transition: all 0.3s ease;

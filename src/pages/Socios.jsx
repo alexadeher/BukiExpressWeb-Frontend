@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { Box, Typography, Grid, Button, TextField } from "@mui/material";
 import "../styles/Site.css"
-import { BarChart, MoneyOff, Campaign, Info } from "@mui/icons-material";
+import { BarChart, MoneyOff, Campaign, Info, DeliveryDining } from "@mui/icons-material";
 import SocioSection from "../assets/SocioSection.png";
 import { saveSocio } from "../api/socios";
 
@@ -147,10 +147,10 @@ const Socios = () => {
               
                {/* Beneficio 4 */}
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2.5, mb: 5 }}>
-                <Campaign className="icon2-section" mb={1} fontSize="large" sx={{ color: 'white', fontSize: '50px', alignSelf: 'center' }} />
+                <DeliveryDining className="icon2-section" mb={1} fontSize="large" sx={{ color: 'white', fontSize: '50px', alignSelf: 'center' }} />
                 <Box>
-                  <Typography sx={{ fontSize: '1.2rem', color: '#25316D', fontWeight: 'bold', textAlign: 'left'}}>Promoción de tu negocio</Typography>
-                  <Typography sx={{ fontSize: '1rem', textAlign: 'justify', marginRight: '4.2rem' }}>Te damos visibilidad con publicaciones y campañas en nuestras redes.</Typography>
+                  <Typography sx={{ fontSize: '1.2rem', color: '#25316D', fontWeight: 'bold', textAlign: 'left'}}>Ofrece servicio a domicilio</Typography>
+                  <Typography sx={{ fontSize: '1rem', textAlign: 'justify', marginRight: '4.2rem' }}>Tu negocio da el primer paso, nosotros cerramos la experiencia con entregas profesionales.</Typography>
                 </Box>
               </Box>
             </div>

@@ -12,7 +12,7 @@ const GestionSocios = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [searchQuery, setSearchQuery] = useState("");
-    const [statusFilter, setStatusFilter] = useState("active");
+    const [statusFilter, setStatusFilter] = useState("all");
 
     const [showtoas, setShowtoas] = useState(false);
 
@@ -253,8 +253,8 @@ const GestionSocios = () => {
 
             {/* Modal para cambiar el estado */}
             <Dialog open={openStatusModal} onClose={handleCloseStatusModal}>
-                <DialogTitle>
-                    Confirmar cambio de estado
+                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+                    Confirmación
                     <IconButton
                     aria-label="close"
                     onClick={handleCloseStatusModal}
@@ -262,30 +262,29 @@ const GestionSocios = () => {
                         position: "absolute",
                         right: 8,
                         top: 8,
-                        color: (theme) => theme.palette.grey[500],
+                        color: 'white',
                     }}
                     >
                     <Close />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Box sx={{ p: 2 }}>
-                    <Typography variant="body1" gutterBottom>
-                        ¿Estás seguro que deseas cambiar el estado del usuario: "
-                        {selectedSocio?.nombre}"?
+                    <Box sx={{ p: 2.5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Typography variant="h6" sx={{color:'#25316D', fontWeight:'bold', paddingBottom: 1}}>¿Deseas cambiar el estado de revisión?</Typography>
+                    <Typography variant="body1" sx={{color: 'black', fontStyle: 'italic', paddingBottom: 2}}>
+                        El cambio de estado será aplicado automaticamente
                     </Typography>
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, paddingTop: 1.5}}>
                         <Button
                         onClick={handleCloseStatusModal}
-                        color="primary"
-                        sx={{ mr: 2 }}
+                        sx={{backgroundColor: '#7E7E7E', color: 'white', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
                         >
                         Cancelar
                         </Button>
                         <Button
                         onClick={handleChangeStatus}
-                        color="primary"
                         variant="contained"
+                        sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
                         >
                         Confirmar
                         </Button>
@@ -302,9 +301,8 @@ const GestionSocios = () => {
             PaperProps={{
                 sx: {
                 width: '100%',
-                maxWidth: 400, 
-                height: '100%',
-                p: 3,
+                maxWidth: 400,
+                height: '100%', 
                 boxSizing: 'border-box',
                 backgroundColor: '#F5F5F5',
                 borderTopLeftRadius: 16,
@@ -333,17 +331,18 @@ const GestionSocios = () => {
                     </IconButton>
                     <Typography sx={{color: '#25316D'}}>Atrás</Typography>
                 </Box>
-                <Typography variant="h6" sx={{color: '#7E7E7E', fontWeight: 'bold', margin: 0.5}}>DETALLES</Typography>
-
-                <Box bgcolor="white" p={2} borderRadius={2} sx={{width: '22rem'}}>
-                    <Typography variant="h6" fontWeight="bold" color='#FF9149'>Información</Typography>
-                    <ul style={{paddingLeft: 22}}>
-                        <li>Negocio: {selectedOne.nombreEstablecimiento}</li>
-                        <li>Teléfono: {selectedOne.telefono}</li>
-                        <li>Nombre del representante: {selectedOne.nombreRepresentante} {selectedOne.apellidosRepresentante}</li>
-                        <li>Producto: {selectedOne.producto}</li>
-                        <li>Ubicación: {selectedOne.ubicacion}</li>
-                    </ul>
+                <Box sx={{backgroundColor: '#EAEAEA', height: '100%'}}>
+                    <Typography variant="h6" sx={{color: '#7E7E7E', fontWeight: 'bold', margin: 0.5, paddingLeft: 1}}>DETALLES</Typography>
+                    <Box bgcolor="white" p={2} borderRadius={2} sx={{width: '24rem', margin: 1}}>
+                        <Typography variant="h6" fontWeight="bold" color='#FF9149'>Información</Typography>
+                        <ul style={{paddingLeft: 22}}>
+                            <li>Negocio: {selectedOne.nombreEstablecimiento}</li>
+                            <li>Teléfono: {selectedOne.telefono}</li>
+                            <li>Nombre del representante: {selectedOne.nombreRepresentante} {selectedOne.apellidosRepresentante}</li>
+                            <li>Producto: {selectedOne.producto}</li>
+                            <li>Ubicación: {selectedOne.ubicacion}</li>
+                        </ul>
+                    </Box>
                 </Box>
                 </>
             )}
