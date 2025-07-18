@@ -11,9 +11,9 @@ const SiteFooter = () => {
                 <Box className="footer-section">
                 <Typography variant="h6">MENÚ</Typography>
                 <ul>
-                    <li><Link href="/home" underline="hover">Inicio</Link></li>
-                    <li><Link href="/socios" underline="hover">Socios</Link></li>
-                    <li><Link href="/repartidores" underline="hover">Repartidores</Link></li>
+                    <li><Link href="/" underline="hover">Inicio</Link></li>
+                    <li><Link href="/page-socios" underline="hover">Socios</Link></li>
+                    <li><Link href="/page-repartidores" underline="hover">Repartidores</Link></li>
                 </ul>
                 </Box>
 

@@ -11,28 +11,32 @@ import Login from "../pages/Login";
 import Registro from "../pages/Registro";
 import Dashboard from "../pages/Dashboard";
 import GestionRepartidores from "../pages/GestionRepartidores";
+import GestionSocios from "../pages/GestionSocios";
+import GestionUsuarios from "../pages/GestionUsuarios";
 import NotFoundPage from "../pages/NotFoundPage";
 import SystemLayout from "../components/SystemLayout";
 import SiteLayout from "../components/SiteLayout";
 
 export const RoutesConfig = () => {
     const { user } = useContext(AuthContext);
-    console.log("Usuario:",user);
+    //console.log("Usuario:",user);
 
     return (
         <Routes>
             {user ? (
                 <Route element={<SystemLayout />}>
                     <Route path="/home" element={<Dashboard />}/>
-                    <Route path="/gestion-repartidores" element={<GestionRepartidores />}/>
+                    <Route path="/repartidores" element={<GestionRepartidores />}/>
+                    <Route path="/socios" element={<GestionSocios />}/>
+                    <Route path="/usuarios" element={<GestionUsuarios />}/>
                 </Route>
             ) : (
                 <Route element={<SiteLayout />}>
                     <Route path="/" element={<Home />}/>
                     <Route path="/login" element={<Login />}/>
                     <Route path="/registro" element={<Registro />}/>
-                    <Route path="/socios" element={<Socios />}/>
-                    <Route path="/repartidores" element={<Repartidores />}/>
+                    <Route path="/page-socios" element={<Socios />}/>
+                    <Route path="/page-repartidores" element={<Repartidores />}/>
                     <Route path="/afiliacion-repartidor" element={<RepartidorForm />}/>
                 </Route>
             )}

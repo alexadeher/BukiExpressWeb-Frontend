@@ -167,7 +167,7 @@ const Home = () => {
                   </Box>
                   <Button
                     component={RouterLink}
-                    to="/repartidores"
+                    to="/page-repartidores"
                     sx={{
                     backgroundColor: '#71C3F3',
                     color: 'white',
@@ -204,7 +204,7 @@ const Home = () => {
                   </Box>
                   <Button
                     component={RouterLink}
-                    to="/socios"
+                    to="/page-socios"
                     sx={{
                     backgroundColor: '#71C3F3',
                     color: 'white',

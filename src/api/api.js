@@ -11,7 +11,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("jwt");
-        console.log("Token en el request interceptor:", token);
+        //console.log("Token en el request interceptor:", token);
         if (token) {
         config.headers.Authorization = `Bearer ${token}`;
         }
@@ -25,7 +25,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
     (response) => {
-        console.log("Respuesta de la API:", response);
+        //console.log("Respuesta de la API:", response);
         return response;
     },
     (error) => {

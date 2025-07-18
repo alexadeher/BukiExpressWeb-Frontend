@@ -64,7 +64,7 @@ const Sidebar = ({ onClose }) => {
         localStorage.removeItem("user");
         localStorage.removeItem("jwt");
         localStorage.removeItem("expiration");
-        navigate("/");
+        navigate("/login");
         window.location.reload();
     };
 
@@ -102,7 +102,7 @@ const Sidebar = ({ onClose }) => {
                     <SidebarItem 
                         icon={<Home size={20} />} 
                         text="Home" 
-                        to="/" 
+                        to="/home" 
                         isActive={currentPath === "/home" || currentPath === "/"} 
                         collapsed={collapsed}
                         onClick={isMobile ? onClose : undefined}
