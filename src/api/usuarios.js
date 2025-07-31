@@ -11,24 +11,36 @@ export const getUsuario = async (id) => {
 }
 
 export const crearUsuario = async (nombre, apellidos, correo, contrasena, rol) => {
-    try {
-        const formData = new FormData();
-        formData.append("nombre", nombre);
-        formData.append("apellidos", apellidos);
-        formData.append("correo", correo);
-        formData.append("contrasena", contrasena);
-        formData.append("rol", rol);
+    /*console.log({
+        nombre,
+        apellidos,
+        correo,
+        contrasena,
+        rol
+    });*/
 
-        const response = await api.post(`${endpoint}/guardar`, formData, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-                "Content-Type": "application/json",
-            },
-        });
+    const jwt = localStorage.getItem("jwt");
+    
+    const headers = {
+        "Content-Type": "application/json",
+    };
+    // Verificar si el JWT existe antes de hacer la solicitud
+    if (jwt) {
+        headers["Authorization"] = `Bearer ${jwt}`;
+    }
+    // Realizar la solicitud POST para crear el usuario
+    try {
+        const response = await api.post("/usuarios/guardar", {
+            nombre,
+            apellidos,
+            correo,
+            contrasena,
+            rol
+        }, { headers });
         return response.data;
     } catch (error) {
         console.error("Error al crear el usuario:");
-        console.error(error.response); 
+        console.error(error.response?.data || error); 
         throw error;
     }
 };

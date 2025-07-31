@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box, Typography, Stepper, Step, StepButton, TextField,
-  Button, RadioGroup, Radio, FormControlLabel, FormControl, FormLabel, MenuItem, Dialog, DialogTitle, DialogContent, ImageList, ImageListItem
+  Button, RadioGroup, Radio, FormControlLabel, FormControl, FormLabel, MenuItem, Dialog, DialogTitle, DialogContent, ImageList, ImageListItem, 
+  Checkbox, Table, TableHead, TableRow, TableCell, TableBody
 } from '@mui/material';
 import "../styles/Site.css";
 import FileInput from "../components/FileInput.jsx";
@@ -19,19 +20,37 @@ const RepartidorForm = () => {
   nombre: '',
   apellidos: '',
   edad: '',
-  residencia: '',
+  domicilio: '',
+  telefono: '',
+  telefonoSecundario: '',
   moto: '',
   mochilaReparto: '', 
   trabajoActual: '',
   horarioTrabajo: '', 
   ine: null,
-  domicilio: null,
+  comprobanteDomicilio: null,
   licencia: null,
-  cuenta: null,
-  motoPropia: '',
+  cuenta: '',
   efectivoRevolvente: '',
   horarioPreferido: ''
 });
+
+  const [nombre, setNombre] = useState('');
+  const [apellidos, setApellidos] = useState(''); 
+  const [edad, setEdad] = useState('');
+  const [ubicacion, setUbicacion] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [telefonoSecundario, setTelefonoSecundario] = useState('');
+  const [moto, setMoto] = useState('');
+  const [mochilaReparto, setMochilaReparto] = useState('');
+  const [trabajoActual, setTrabajoActual] = useState('');
+  const [horarioTrabajo, setHorarioTrabajo] = useState('');
+  const [ine, setIne] = useState(null);
+  const [comprobanteDomicilio, setComprobanteDomicilio] = useState(null);
+  const [licencia, setLicencia] = useState(null);
+  const [cuenta, setCuenta] = useState('');
+  const [efectivoRevolvente, setEfectivoRevolvente] = useState('');
+  const [horarioPreferido, setHorarioPreferido] = useState('');
 
   const handleStep = (step) => () => setActiveStep(step);
 
@@ -42,11 +61,13 @@ const RepartidorForm = () => {
     if (!formData.nombre.trim()) newErrors.nombre = true;
     if (!formData.apellidos.trim()) newErrors.apellidos = true;
     if (!formData.edad) newErrors.edad = true;
-    if (!formData.residencia.trim()) newErrors.residencia = true;
+    if (!formData.domicilio.trim()) newErrors.domicilio = true;
+    if (!formData.telefono.trim()) newErrors.telefono = true;
+    if (!formData.telefonoSecundario.trim()) newErrors.telefonoSecundario = true;
     if (!formData.moto) newErrors.moto = true;
     if (!formData.mochilaReparto) newErrors.mochilaReparto = true;
     if (!formData.trabajoActual) newErrors.trabajoActual = true;
-    if (formData.trabajoActual === 'sí' && !formData.horarioTrabajo) {
+    if (trabajoActual === 'sí' && !horarioTrabajo) {
       newErrors.horarioTrabajo = true;
     }
 
@@ -58,11 +79,10 @@ const RepartidorForm = () => {
   const validateStepTwo = () => {
     const newErrors = {};
     if (!formData.ine) newErrors.ine = true;
-    if (!formData.domicilio) newErrors.domicilio = true;
+    if (!formData.comprobanteDomicilio) newErrors.comprobanteDomicilio = true;
     if (!formData.licencia) newErrors.licencia = true;
     if (!formData.cuenta) newErrors.cuenta = true;
     if (!formData.efectivoRevolvente) newErrors.efectivoRevolvente = true;
-    if (!formData.motoPropia) newErrors.motoPropia = true;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -71,7 +91,7 @@ const RepartidorForm = () => {
     // Función para validar el paso 2 del formulario
   const validateStepThree = () => {
     const newErrors = {};
-    if (!formData.horarioPreferido) newErrors.horarioPreferido = true;
+    if (!horarioPreferido) newErrors.horarioPreferido = true;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -116,13 +136,63 @@ const RepartidorForm = () => {
     setFormData({ ...formData, [name]: e.target.files[0] });
   };
 
+
+  // Paso 3: Formulario de horario
+  const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+  const [horarios, setHorarios] = useState([]);
+  const [horarioError, setHorarioError] = useState(null);
+
+  const horas = Array.from({ length: 13 }, (_, i) => {
+    const start = 9 + i;
+    return {
+      inicio: `${start.toString().padStart(2, '0')}:00`,
+      fin: `${(start + 1).toString().padStart(2, '0')}:00`,
+    };
+  });
+
+  const [seleccionados, setSeleccionados] = useState({});
+
+  const toggleHorario = (dia, hora) => {
+    const key = `${dia}_${hora.inicio}_${hora.fin}`;
+    const nuevoEstado = { ...seleccionados, [key]: !seleccionados[key] };
+    setSeleccionados(nuevoEstado);
+  };
+
+  // Validar mínimo 3 horas por día seleccionado
+  useEffect(() => {
+    const horariosSeleccionados = Object.entries(seleccionados)
+      .filter(([_, activo]) => activo)
+      .map(([key]) => {
+        const [dia, inicio, fin] = key.split("_");
+        return { dia, horaInicio: inicio, horaFin: fin };
+      });
+
+    const agrupadosPorDia = horariosSeleccionados.reduce((acc, horario) => {
+      acc[horario.dia] = acc[horario.dia] || [];
+      acc[horario.dia].push(horario);
+      return acc;
+    }, {});
+
+    const diasConError = Object.entries(agrupadosPorDia)
+      .filter(([_, horarios]) => horarios.length < 3)
+      .map(([dia]) => dia);
+
+    if (diasConError.length > 0) {
+      setHorarioError(`Selecciona al menos 3 horas para: ${diasConError.join(", ")}`);
+    } else {
+      setHorarioError(null); // no hay errores
+    }
+
+    setHorarios(horariosSeleccionados);
+  }, [seleccionados]);
+
   return (
     <Box sx={{ padding: '4rem', backgroundColor: '#f6f6f6' }}>
       <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#25316D', textAlign: 'left', mb: 1 }}>
         ¡Afíliate hoy y haz crecer tu negocio!
       </Typography>
       <Typography variant="body2" sx={{ fontSize: '1rem', textAlign: 'left', mb: 3 }}>
-        Completa el formulario y únete a nuestra red de socios.
+        Completa el formulario y únete a nuestra red de repartidores.
       </Typography>
 
       <div className="divider">
@@ -189,7 +259,7 @@ const RepartidorForm = () => {
                 error={errors.edad}
               >
               <MenuItem value="" disabled></MenuItem>
-              {Array.from({ length: 23 }, (_, i) => {
+              {Array.from({ length: 15 }, (_, i) => {
                 const age = i + 18;
                 return (
                   <MenuItem key={age} value={age}>
@@ -203,13 +273,51 @@ const RepartidorForm = () => {
               <TextField
                 fullWidth
                 required
-                name="residencia"
+                name="domicilio"
                 label="Lugar de residencia"
                 variant="filled"
                 size="small"
-                value={formData.residencia}
+                value={formData.ubicacion}
                 onChange={handleChange}
-                error={errors.residencia}
+                error={errors.ubicacion}
+              />
+            </div>
+            <div className="form-input">
+              <TextField 
+              fullWidth 
+              required
+              type="tel"
+              label="Teléfono" 
+              variant="filled" 
+              size="small" 
+              value={formData.telefono}
+              name="telefono"
+              onChange={handleChange}
+              inputProps={{
+                maxLength: 10,
+                inputMode: 'numeric',
+                pattern: '[0-9]*'
+              }}
+              error={errors.telefono}
+              />
+            </div>
+            <div className="form-input">
+              <TextField 
+              fullWidth 
+              required 
+              type="tel"
+              label="Teléfono Secundario" 
+              variant="filled" 
+              size="small" 
+              value={formData.telefonoSecundario}
+              name='telefonoSecundario'
+              onChange={handleChange}
+              inputProps={{
+                maxLength: 10,
+                inputMode: 'numeric',
+                pattern: '[0-9]*'
+              }}
+              error={errors.telefonoSecundario}
               />
             </div>
           </Box>
@@ -297,6 +405,11 @@ const RepartidorForm = () => {
                   error={errors.ine}
                   file={formData.ine}
                   onChange={handleFileChange}
+                  fullWidth 
+                  required 
+                  variant="filled" 
+                  size="small" 
+                  value={formData.ine}
                 />
               </div>
               <div className="form-input">
@@ -317,31 +430,25 @@ const RepartidorForm = () => {
                   onChange={handleFileChange}
                 />
               </div>
-              <div className="form-input">
-                <FileInput
-                  name="cuenta"
-                  label="Comprobante de cuenta bancaria"
-                  error={errors.cuenta}
-                  file={formData.cuenta}
-                  onChange={handleFileChange}
-                />
-              </div>
             </Box>
             {/* Columna Derecha */}
             <Box sx={{ flex: 1, minWidth: 300 }}>
-              <div className="form-input">
-                <FormControl component="fieldset" error={errors.motoPropia}>
-                  <FormLabel>¿Cuentas con motocicleta propia?</FormLabel>
-                  <RadioGroup
-                    row
-                    name="motoPropia"
-                    value={formData.motoPropia}
-                    onChange={handleChange}
-                  >
-                    <FormControlLabel value="si" control={<Radio />} label="Sí" />
-                    <FormControlLabel value="no" control={<Radio />} label="No" />
-                  </RadioGroup>
-                </FormControl>
+              <div className="form-input" style={{ marginTop: '1.8rem' }}>
+                <TextField 
+                fullWidth 
+                required 
+                label="Número de cuenta bancaria" 
+                variant="filled" 
+                size="small"
+                value={formData.cuenta}
+                name="cuenta"
+                onChange={handleChange}
+                inputProps={{
+                maxLength: 18,
+                inputMode: 'numeric',
+                pattern: '[0-9]*'
+              }}
+                />
               </div>
               <div className="form-input">
                 <FormControl component="fieldset" error={errors.efectivoRevolvente}>
@@ -365,32 +472,57 @@ const RepartidorForm = () => {
         {activeStep === 2 && (
           <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap'}}>
             {/* Columna Izquierda */}
-            <Box sx={{ flex: 1, minWidth: 300 }}>
+            <Box sx={{ flex: 4, minWidth: 300 }}>
               <div className="form-input">
-                <Typography variant="body1" sx={{ mb: 2 }}>Selecciona tu horario disponible:</Typography>
-                <TextField
-                  select
-                  fullWidth
-                  name="horarioPreferido"
-                  label="Horario"
-                  variant="filled"
-                  size="small"
-                  value={formData.horarioPreferido}
-                  onChange={handleChange}
-                  error={errors.horarioPreferido}
-                >
-                  <MenuItem value="" disabled></MenuItem>
-                  {['Mañana (08:00am - 12:00pm)', 'Mediodía (13:00pm - 15:00pm)', ' Tarde (15:00pm - 18:00pm)'].map((i) => (
-                    <MenuItem key={i} value={i.toLowerCase()}>{i}</MenuItem>
-                  ))}
-                </TextField>
+                <Typography variant="body1" sx={{ mb: 2 }}>Selecciona minimo 3 horas por día</Typography>
+                <Box sx={{ overflowX: 'auto', mt: 2 }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Hora</TableCell>
+                          {dias.map((dia) => (
+                            <TableCell key={dia}>{dia}</TableCell>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {horas.map((hora) => (
+                          <TableRow key={hora.inicio}>
+                            <TableCell>{`${hora.inicio} - ${hora.fin}`}</TableCell>
+                            {dias.map((dia) => {
+                              const key = `${dia}_${hora.inicio}_${hora.fin}`;
+                              return (
+                                <TableCell key={key}>
+                                  <Checkbox
+                                    checked={!!seleccionados[key]}
+                                    onChange={() => toggleHorario(dia, hora)}
+                                  />
+                                </TableCell>
+                              );
+                            })}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Box>
               </div>
             </Box>
+            {/* Columna Derecha */}
             <Box sx={{ flex: 1, minWidth: 300 }}>
+              <div className="form-input">
+                {horarioError && (
+                  <Typography color="error" mt={1}>
+                    {horarioError}
+                  </Typography>
+                )}
+              </div>
             </Box>
           </Box>
         )}
 
+        <Typography variant="body2" sx={{ fontSize: '0.9rem', textAlign: 'left', mb: 2 }}>
+          * Los campos marcados con asterisco son obligatorios. 
+        </Typography>
         {/* Botón siguiente o enviar */}
         <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
           {activeStep > 0 ? (

@@ -9,3 +9,7 @@ export const getRepartidores = async () => {
 export const getRepartidor = async (id) => {
     return await api.get(`${endpoint}/${id}`);
 }
+
+export const saveRepartidor = async (repartidor) => {
+    return await api.post(`${endpoint}/guardar`, repartidor);
+}

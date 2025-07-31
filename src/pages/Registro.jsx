@@ -1,16 +1,74 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import {Box, Button, TextField, MenuItem, Typography, InputAdornment, IconButton, Link} from '@mui/material';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import FondoForm from "../assets/welcomeLogin.png";
 import Fondo from "../assets/welcomeBackground.png";
 import Logo from "../assets/logoHorizontalSombra.png"
+import { crearUsuario } from "../api/usuarios";
 
 const Registro = () => {
+    const [nombre, setNombre] = useState("");
+    const [apellidos, setApellidos] = useState("");
+    const [correo, setCorreo] = useState("");
+    const [contrasena, setContrasena] = useState("");
+    const [rol, setRol] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+
+    const handleNombreChange = (e) => {
+        setNombre(e.target.value);
+    }
+
+    const handleApellidosChange = (e) => {
+        setApellidos(e.target.value);
+    }
+
+    const handleCorreoChange = (e) => {
+        setCorreo(e.target.value);    
+    }
+    const handleContrasenaChange = (e) => {
+        setContrasena(e.target.value);
+    }
 
     const handleTogglePassword = () => {
         setShowPassword((prev) => !prev);
     };
+
+    const handleSubmit = async () => {
+        const camposFaltantes = [];
+
+        if (!nombre.trim()) camposFaltantes.push("Nombre");
+        if (!apellidos.trim()) camposFaltantes.push("Apellidos");
+        if (!correo.trim()) camposFaltantes.push("Correo electrónico");
+        if (!contrasena.trim()) camposFaltantes.push("Contraseña");
+        if (!rol.trim()) camposFaltantes.push("Rol");
+
+        if (camposFaltantes.length > 0) {
+            toast.error(`Faltan campos requeridos: ${camposFaltantes.join(', ')}`);
+            return;
+        }
+
+        // Si todo está bien, continuar con el registro...
+        try {
+            const usuarioCreado = await crearUsuario(nombre, apellidos, correo, contrasena, rol);            
+            //console.log("Usuario creado:", usuarioCreado);
+            toast.success("Cuenta registrada. Espera la aprobación.");
+
+            // Limpiar los campos del formulario
+            setNombre("");
+            setApellidos("");
+            setCorreo("");
+            setContrasena("");
+            setRol("");
+
+            navigate("/login");
+        } catch (error) {
+            console.error("Error al crear el usuario:", error);
+            toast.error("Error al registrar la cuenta. Inténtalo de nuevo.");
+        }
+    }
 
     return (
         <Box sx={{ backgroundImage: `url(${Fondo})`, display: 'flex', minHeight: '100vh', 
@@ -50,6 +108,8 @@ const Registro = () => {
                                 placeholder="Nombre(s)"
                                 fullWidth
                                 margin="normal"
+                                value={nombre}
+                                onChange={handleNombreChange}
                             />
                             <TextField
                                 required
@@ -58,6 +118,8 @@ const Registro = () => {
                                 placeholder="Apellidos"
                                 fullWidth
                                 margin="normal"
+                                value={apellidos}
+                                onChange={handleApellidosChange}
                             />
                             <TextField
                                 required
@@ -67,6 +129,8 @@ const Registro = () => {
                                 fullWidth
                                 margin="normal"
                                 type="email"
+                                value={correo}
+                                onChange={handleCorreoChange}
                             />
                             <TextField
                                 required
@@ -85,6 +149,8 @@ const Registro = () => {
                                     </InputAdornment>
                                 ),
                                 }}
+                                value={contrasena}
+                                onChange={handleContrasenaChange}
                             />
                             <TextField
                                 select
@@ -93,16 +159,18 @@ const Registro = () => {
                                 label="Rol"
                                 variant="filled"
                                 margin="normal"
+                                value={rol}
+                                onChange={(e) => setRol(e.target.value)}
+                                autoFocus
                             >                        
-                                <MenuItem value="" disabled></MenuItem>
-                                {['Administrador', 'Personal'].map((i) => (
-                                <MenuItem key={i} value={i.toLowerCase()}>{i}</MenuItem>
-                                ))}
+                                <MenuItem value="" disabled>Selecciona un rol</MenuItem>
+                                <MenuItem value="ROLE_ADMIN_ACCESS">Administrador</MenuItem>
+                                <MenuItem value="ROLE_PERSONAL_ACCESS">Personal</MenuItem>
                             </TextField>
                         </Box>
                         <Box sx={{ flexShrink: 0, px: 3, pb: 5, mt: 3 }}>
                             <Box sx={{ display: 'flex', justifyContent: 'center'}}>
-                                <Button variant="contained"
+                                <Button variant="contained" onClick={handleSubmit}
                                     sx={{backgroundColor: '#25316D', color: 'white', py: 1.5, textTransform: 'none', 
                                         width: '10rem', borderRadius: '60px', fontSize: '16px', 
                                         '&:hover': {
@@ -116,7 +184,10 @@ const Registro = () => {
                             <Box textAlign="center" mt={2}>
                                 <Typography variant="body2" sx={{color: '#39405C'}}>
                                 ¿Ya tienes cuenta?{' '}
-                                <Link href="/login" underline='hover'>
+                                <Link onClick={(e) => {
+                                    e.preventDefault();
+                                    navigate("/login");
+                                }} underline='hover'>
                                     Inicia sesión
                                 </Link>
                                 </Typography>
@@ -125,6 +196,7 @@ const Registro = () => {
                     </Box>
                 </Box>
             </Box>
+            <ToastContainer/>
         </Box>
     );
 };

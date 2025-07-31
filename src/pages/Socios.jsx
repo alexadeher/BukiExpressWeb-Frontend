@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import { Box, Typography, Grid, Button, TextField } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
 import "../styles/Site.css"
 import { BarChart, MoneyOff, Campaign, Info, DeliveryDining } from "@mui/icons-material";
 import SocioSection from "../assets/SocioSection.png";
@@ -9,6 +10,7 @@ const Socios = () => {
 
   const [nombreEstablecimiento, setNombreEstablecimiento] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [telefonoSecundario, setTelefonoSecundario] = useState("");
   const [nombreRepresentante, setNombreRepresentante] = useState("");
   const [apellidosRepresentante, setApellidosRepresentante] = useState("");
   const [producto, setProducto] = useState("");
@@ -20,6 +22,10 @@ const Socios = () => {
 
   const handleTelefonoChange = (e) => {
     setTelefono(e.target.value);
+  }
+
+  const handleTelefonoSecundarioChange = (e) => {
+    setTelefonoSecundario(e.target.value);  
   }
 
   const handleNombreRepresentanteChange = (e) => {
@@ -44,6 +50,7 @@ const Socios = () => {
     const nuevoSocio = {
       nombreEstablecimiento,
       telefono,
+      telefonoSecundario,
       nombreRepresentante,
       apellidosRepresentante,
       producto, 
@@ -52,20 +59,22 @@ const Socios = () => {
 
     try {
       const response = await saveSocio(nuevoSocio);
-    if (response.status === 200) {
-        alert("Datos guardados exitosamente");
-        setNombreEstablecimiento("");
-        setTelefono("");
-        setNombreRepresentante("");
-        setApellidosRepresentante("");
-        setProducto("");
-        setUbicacion("");
-      } else {
-        alert("Error al guardar datos");
-      }
+      if (response.status === 200) {
+          toast.success("Datos enviados exitosamente");
+          // Limpiar los campos del formulario
+          setNombreEstablecimiento("");
+          setTelefono("");
+          setTelefonoSecundario("");
+          setNombreRepresentante("");
+          setApellidosRepresentante("");
+          setProducto("");
+          setUbicacion("");
+        } else {
+          toast.error("Error al enviar los datos");
+        }
     } catch (error) {
       console.error(error);
-      alert("Error de conexión con el servidor");
+      toast.error("Error de conexión");
     }
   }
 
@@ -185,12 +194,45 @@ const Socios = () => {
               <div className="form-input">
                 <TextField 
                 fullWidth 
-                required 
+                required
+                type="tel"
                 label="Teléfono" 
                 variant="filled" 
                 size="small" 
                 value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
+                onChange={(e) => {
+                  const valor = e.target.value;
+                  if (/^\d{0,10}$/.test(valor)) {
+                    setTelefono(valor);
+                  }
+                }}
+                inputProps={{
+                  maxLength: 10,
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
+                />
+              </div>
+              <div className="form-input">
+                <TextField 
+                fullWidth 
+                required 
+                type="tel"
+                label="Teléfono Secundario" 
+                variant="filled" 
+                size="small" 
+                value={telefonoSecundario}
+                onChange={(e) => {
+                  const valor = e.target.value;
+                  if (/^\d{0,10}$/.test(valor)) {
+                    setTelefonoSecundario(valor);
+                  }
+                }}
+                inputProps={{
+                  maxLength: 10,
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
                 />
               </div>
               <div className="form-input">
@@ -211,7 +253,7 @@ const Socios = () => {
                 />
               </div>
               <div className="form-input">
-                <TextField fullWidth required label="Producto" variant="filled" size="small" 
+                <TextField fullWidth required label="Producto o servicio" variant="filled" size="small" 
                 value={producto}
                 onChange={(e) => setProducto(e.target.value)}
                 />
@@ -257,6 +299,7 @@ const Socios = () => {
         </Grid>
         </Box>
       </Box>
+      <ToastContainer/>
     </Box>
   );
 };

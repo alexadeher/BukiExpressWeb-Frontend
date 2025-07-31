@@ -1,36 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Box, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
-import { Search, Add, Edit, Close, ArrowBack, Delete } from "@mui/icons-material";
+import { Search, CheckCircle, Close, ArrowBack, Cancel } from "@mui/icons-material";
 import { getUsuarios, crearUsuario, changeStatus, editUsuario } from "../api/usuarios";
+import { aprobarUsuario, getNotificaciones, rechazarUsuario } from "../api/notificaciones";
 import Logo from "../assets/logoHorizontal.png";
 
-const GestionUsuarios = () => {
+const NuevasCuentas = () => {
     // Estados para la tabla y búsqueda
-    const [usuarios, setUsuarios] = useState([]);
+    const [notificaciones, setNotificaciones] = useState([]);
     const [filteredUsuarios, setFilteredUsuarios] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
 
-    // Estados para agregar/editar usuario
-    const [openAddModal, setOpenAddModal] = useState(false);
-    const [currentUsuario, setCurrentUsuario] = useState(null)
-
-    const [nombre, setNombre] = useState("");
-    const [apellidos, setApellidos] = useState("");
-    const [correo, setCorreo] = useState("");
-    const [contrasena, setContrasena] = useState("");
-    const [rol, setRol]= useState("");
-    const [isLoading, setIsLoading] = useState(false);
-
     const [showtoas, setShowtoas] = useState(false);
 
     // Estados de modal de detalles
     const [openDetailsModal, setOpenDetailsModal] = useState(false);
     const [selectedOne, setSelectedOne] = useState(null);
-
 
     // Drawer - traducir rol
     const traducirRol = (rol) => {
@@ -44,14 +33,13 @@ const GestionUsuarios = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchUsuarios = async () => {
+        const fetchSolicitudes = async () => {
         try {
-            const response = await getUsuarios();
+            const response = await getNotificaciones();
             const newData = response.data.result;
 
-            if (JSON.stringify(newData) !== JSON.stringify(usuarios)) {
-                setUsuarios(newData);
+            if (JSON.stringify(newData) !== JSON.stringify(notificaciones)) {
+                setNotificaciones(newData);
                 setFilteredUsuarios(newData);
 
                 if (!showtoas && !localStorage.getItem('toastShown')) {
@@ -63,35 +51,38 @@ const GestionUsuarios = () => {
         } catch (error) {
             console.error("Error fetching data:", error);
             if (!showtoas && !localStorage.getItem('toastShown')) {
-                toast.error("Error al cargar los usuarios");
+                toast.error("Error al cargar las solicitudes de nuevos usuarios");
                 setShowtoas(true);
                 localStorage.setItem('toastShown', 'true');  // Marcar que ya se mostró el toast
             }
         }
     };
-
-    fetchUsuarios();
-        const interval = setInterval(fetchUsuarios, 5000);
+    useEffect(() => {
+    fetchSolicitudes();
+        const interval = setInterval(fetchSolicitudes, 5000);
         return () => clearInterval(interval);
-    }, [usuarios]);
+    }, []);
 
 
     // Filtrar usuarios
     useEffect(() => {
-        let filtered = usuarios.filter((usuario) =>
-            usuario.nombre.toLowerCase().includes(searchQuery.toLowerCase())
-            || usuario.apellidos.toLowerCase().includes(searchQuery.toLowerCase())
-            || usuario.correo.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        let filtered = notificaciones.filter((notificacion) => {
+            const usuario = notificacion.usuario;
+            return (
+            notificacion.usuario.nombre.toLowerCase().includes(searchQuery.toLowerCase())
+            || notificacion.usuario.apellidos.toLowerCase().includes(searchQuery.toLowerCase())
+            || notificacion.usuario.correo.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        });
 
         if (statusFilter !== "all") {
             filtered = filtered.filter(
-            (usuario) => usuario.estado === (statusFilter === "active")
+            (usuario) => usuario.status === statusFilter
             );
         }
 
         setFilteredUsuarios(filtered);
-    }, [searchQuery, statusFilter, usuarios]);
+    }, [searchQuery, statusFilter, notificaciones]);
 
     // Manejadores de paginación
     const handleChangePage = (event, newPage) => {
@@ -103,80 +94,77 @@ const GestionUsuarios = () => {
         setPage(0);
     };
 
-    const resetForm = () => {
-        setNombre("");
-        setApellidos("");
-        setCorreo("");
-        setRol("");
-        setContrasena("");
-    };
-
-
-      // Manejar modal de agregar/editar usuario
-    const handleOpenModalUsuario = (usuario = null) => {
-        setCurrentUsuario(usuario);
-        if (usuario) {
-            // Editar
-            setNombre(usuario.nombre);
-            setApellidos(usuario.apellidos);
-            setCorreo(usuario.correo);
-            setRol("");
-            setContrasena(""); // Deshabilitado, pero limpiamos igual
-        } else {
-            // Agregar nuevo
-            resetForm();
-        }
-        setOpenAddModal(true);
-    };
-
     const handleCloseModalUsuario = () => {
         setOpenAddModal(false);
         setCurrentUsuario(null);
         resetForm();
     };
 
-    // Enviar formulario
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
+    // Manejo de botón aprobar
+    const [openAprobarModal, setOpenAprobarModal] = useState(false);
+    const [currentNotificacion, setCurrentNotificacion] = useState(null);
+    
+    const handleOpenAprobarModal = (notificacion) => {
+        setCurrentNotificacion(notificacion);
+        setOpenAprobarModal(true);
+    };
+    
+    const handleCloseAprobarModal = () => {
+        setOpenAprobarModal(false); 
+        setCurrentNotificacion(null);
+    };
 
+    const handleAprobar = async () => {
+        //console.log(currentNotificacion)
         try {
-            let response;
-
-            if (currentUsuario) {
-                 // Modo editar
-                response = await editUsuario({
-                    id: currentUsuario.id,
-                    nombre,
-                    apellidos,
-                    correo,
-                    rol
-                });
-            } else {
-                // Modo agregar
-                response = await crearUsuario(nombre, apellidos, correo, contrasena, rol);
-            }
-            
-            //console.log("Respuesta de la API:", response);
-
-            if (response.type === "ERROR") {
-                toast.error(response.text);
-            } else if (response.type === "SUCCESS") {
-                toast.success(response.text);
-            } else if (response.type === "WARNING") {
-                toast.warning(response.text);
-            }
+            const response = await aprobarUsuario({
+                id: currentNotificacion.id,
+                comentarios: "Solicitud aprobada por el administrador"
+            });
+            toast.success(response?.data?.text || "Solicitud aprobada correctamente");
+            fetchSolicitudes();
         } catch (error) {
-            toast.error(error.response?.data?.message || "Error al crear usuario");
-            console.error("Error al crear usuario:", error);
+            console.error("Error al aprobar la solicitud:", error);
+            toast.error(error.response?.data?.text || "Error al aprobar la solicitud");
         } finally {
-            setIsLoading(false);
+            handleCloseRechazarModal();
+        }
+    };
+
+    // Manejo de botón rechazar
+    const [openRechazarModal, setOpenRechazarModal] = useState(false);
+    const [selectedNotificacion, setSelectedNotificacion] = useState(null);
+
+    const handleOpenRechazarModal = (notificacion) => {
+        setSelectedNotificacion(notificacion);
+        setOpenRechazarModal(true);
+    };
+
+    const handleCloseRechazarModal = () => {
+        setOpenRechazarModal(false);
+        setSelectedNotificacion(null);
+    };
+
+    const handleRechazar = async () => {
+        //console.log(selectedNotificacion)
+        try {
+            const response = await rechazarUsuario({
+                id: selectedNotificacion.id,
+                comentarios: "Solicitud rechazada por el administrador"
+            });
+            toast.success(response?.data?.text || "Solicitud rechazada correctamente");
+            fetchSolicitudes();
+        } catch (error) {
+            console.error("Error al rechazar la solicitud:", error);
+            toast.error(error.response?.data?.text || "Error al rechazar la solicitud");
+        } finally {
+            handleCloseRechazarModal();
         }
     };
 
     // Manejar modal de detalles del usuario
-    const handleOpenModal = (usuario) => {
-        setSelectedOne(usuario);
+    const handleOpenModal = (notificacion) => {
+        setSelectedOne(notificacion.usuario);
         setOpenDetailsModal(true);
     };
 
@@ -211,8 +199,8 @@ const GestionUsuarios = () => {
             if (response.type === "SUCCESS") {
                 toast.success(response.text);
                 // Actualizar el estado local
-                setUsuarios(
-                    usuarios.map((cat) =>
+                setNotificaciones(
+                    notificaciones.map((cat) =>
                     cat.id === selectedUsuario.id
                     ? {...cat, status: !cat.status }
                     : cat
@@ -254,32 +242,18 @@ const GestionUsuarios = () => {
                         style={{border: 'none', outline: 'none', fontSize: '14px', padding: '5px', borderRadius: '10px', backgroundColor: '#EAEAEA'}}
                     >
                         <option value="all">Todos</option>
-                        <option value="active">Activos</option>
-                        <option value="inactive">Inactivos</option>
+                        <option value="PENDIENTE">Pendientes</option>
+                        <option value="APROBADO">Aprobados</option>
+                        <option value="RECHAZADO">Rechazados</option>
                     </select>
                 </Box>
             </Box>
-            {/* Título y botón de Agregar */}
+            {/* Título */}
             <Box sx={{marginBottom: '10px', padding: '10px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <Typography variant="h5" sx={{align:'left', fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: 30, color: '#25316D'}}>Usuarios</Typography>
-                <Button
-                    variant="contained"
-                    onClick={() => handleOpenModalUsuario(null)}
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        backgroundColor: "#25316D",
-                        color: "white",
-                        borderRadius: "20px",
-                        padding: "8px 20px",
-                        textTransform: 'none'
-                    }}
-                >
-                <Add sx={{ marginRight: "8px" }} />
-                {currentUsuario ? "Editar usuario" : "Nuevo usuario"}
-                </Button>
+                <Typography variant="h5" sx={{align:'left', fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: 30, color: '#25316D'}}>Solicitudes de Nuevos Usuarios</Typography>
+
             </Box>
-            {/* Tabla de gestión de usuarios */}
+            {/* Tabla de gestión de solicitudes */}
             <Box sx={{maxWidth: '1350px', margin: 'auto', textAlign: 'center', padding: '0 20px'}}>
                 <TableContainer 
                     component={Paper}
@@ -293,7 +267,7 @@ const GestionUsuarios = () => {
                     <Table size="small">
                         <TableHead>
                             <TableRow sx={{backgroundColor: '#25316D'}}>
-                                {["ID", "Nombre", "Correo", "Tipo de usuario", "Estado", "Acciones", "Detalles"].map((header) => (
+                                {["ID", "Nombre", "Correo", "Tipo de usuario", "Estado de la solicitud", "Acciones", "Detalles"].map((header) => (
                                 <TableCell
                                     key={header}
                                     sx={{
@@ -311,24 +285,27 @@ const GestionUsuarios = () => {
                         <TableBody>
                             {filteredUsuarios
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((usuario) => (
-                                    <TableRow key={usuario.id} sx={{'&:hover': { backgroundColor: '#f5f5f5' },transition: 'background-color 0.3s'}}>
-                                        <TableCell sx={{textAlign: 'center'}}>{usuario.id}</TableCell>
-                                        <TableCell sx={{textAlign: 'center'}}>{usuario.nombre} {usuario.apellidos}</TableCell>
-                                        <TableCell sx={{textAlign: 'center'}}>{usuario.correo}</TableCell>
-                                        <TableCell sx={{ textAlign: "center" }}>{usuario.rol === "ROLE_ADMIN_ACCESS" ? "Administrador" : "Personal"}</TableCell>
+                                .map((notificacion) => (
+                                    <TableRow key={notificacion.id} sx={{'&:hover': { backgroundColor: '#f5f5f5' },transition: 'background-color 0.3s'}}>
+                                        <TableCell sx={{textAlign: 'center'}}>{notificacion.id}</TableCell>
+                                        <TableCell sx={{textAlign: 'center'}}>{notificacion.usuario.nombre} {notificacion.usuario.apellidos}</TableCell>
+                                        <TableCell sx={{textAlign: 'center'}}>{notificacion.usuario.correo}</TableCell>
+                                        <TableCell sx={{ textAlign: "center" }}>{notificacion.usuario.rol === "ROLE_ADMIN_ACCESS" ? "Administrador" : "Personal"}</TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>
+                                            {notificacion.status === "PENDIENTE" ? "Pendiente" : notificacion.status === "RECHAZADO" ? "Rechazado" : "Aprobado"}
+                                            </TableCell>
+                                        {/*<TableCell sx={{textAlign: 'center'}}>
                                             <Chip 
-                                                label={usuario.estado ? 'Activo' : 'Inactivo'}
-                                                color={usuario.estado ? 'success' : 'default'}
+                                                label={notificacion.usuario.estado ? 'Activo' : 'Inactivo'}
+                                                color={notificacion.usuario.estado ? 'success' : 'default'}
                                                 size="small"
-                                                onClick={() => handleOpenStatusModal(usuario)}
+                                                onClick={() => handleOpenStatusModal(notificacion.usuario)}
                                                 sx={{cursor: 'pointer'}}
                                             />
-                                        </TableCell>
-                                        <TableCell sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                                        </TableCell>*/}
+                                        <TableCell sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '10px'}}>
                                             <IconButton
-                                                onClick={() => handleOpenModalUsuario(usuario)}
+                                                onClick={() => handleOpenAprobarModal(notificacion)}
                                                 sx={{
                                                 backgroundColor: '#25316D',
                                                 color: 'white',
@@ -336,10 +313,10 @@ const GestionUsuarios = () => {
                                                 padding: '6px',
                                                 }}
                                             >
-                                                <Edit />
+                                                <CheckCircle />
                                             </IconButton>
                                             <IconButton
-                                                onClick={() => handleOpenModalUsuario(usuario)}
+                                                onClick={() => handleOpenRechazarModal(notificacion)}
                                                 sx={{
                                                 backgroundColor: '#25316D',
                                                 color: 'white',
@@ -347,11 +324,11 @@ const GestionUsuarios = () => {
                                                 padding: '6px',
                                                 }}
                                             >
-                                                <Delete />
+                                                <Cancel />
                                             </IconButton>
                                         </TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>
-                                            <Button  variant="contained" onClick={() => handleOpenModal(usuario)} sx={{
+                                            <Button  variant="contained" onClick={() => handleOpenModal(notificacion.usuario)} sx={{
                                                 backgroundColor: '#25316D',
                                                 color: 'white',
                                                 borderRadius: '20px',
@@ -383,110 +360,6 @@ const GestionUsuarios = () => {
                     />
                 </TableContainer>
             </Box>
-
-            {/* Modal para agregar nuevo usuario */}
-            <Dialog
-                open={openAddModal}
-                onClose={handleCloseModalUsuario}
-                maxWidth='sm'
-                fullWidth  
-                sx={{
-                    '& .MuiPaper-root': {
-                    border: '2px solid #25316D',
-                    borderRadius: '12px',
-                    }
-                }}         
-            >
-                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white'}}>
-                    {currentUsuario ? "Editar usuario" : "Nuevo usuario"}
-                    <IconButton
-                        aria-label='close'
-                        onClick={handleCloseModalUsuario}
-                        sx={{position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500]}}
-                    >
-                        <Close/>
-                    </IconButton>
-                </DialogTitle>
-                <DialogContent sx={{ maxHeight: '70vh', overflowY: 'auto' }}>
-                    <Box component='form' onSubmit={handleSubmit} sx={{mt: 2}}>
-                        <TextField
-                            margin='normal'
-                            required
-                            fullWidth
-                            id='nombre'
-                            label='Nombre(s)'
-                            name='nombre'
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                            autoFocus
-                        />
-                        <TextField
-                            margin='normal'
-                            required
-                            fullWidth
-                            id='apellidos'
-                            label='Apellidos'
-                            name='apellidos'
-                            value={apellidos}
-                            onChange={(e) => setApellidos(e.target.value)}
-                            autoFocus
-                        />
-                        <TextField
-                            margin='normal'
-                            required
-                            fullWidth
-                            id='correo'
-                            label="Correo electrónico"
-                            name='correo'
-                            value={correo}
-                            onChange={(e) => setCorreo(e.target.value)}
-                            autoFocus
-                        />
-                        {!currentUsuario && (
-                            <TextField
-                            margin='normal'
-                            required
-                            fullWidth
-                            id='contrasena'
-                            label="Contraseña"
-                            placeholder="••••••••"
-                            type="password"
-                            value={contrasena}
-                            onChange={(e) => setContrasena(e.target.value)}
-                            autoFocus
-                            />
-                        )}
-                        {!currentUsuario && (
-                        <TextField
-                            margin='normal'
-                            select
-                            required
-                            fullWidth
-                            id='rol'
-                            label='Rol'
-                            name='rol'
-                            value={rol}
-                            onChange={(e) => setRol(e.target.value)}
-                            autoFocus
-                            >
-                            <MenuItem value="" disabled>Selecciona un rol</MenuItem>
-                            <MenuItem value="ROLE_ADMIN_ACCESS">Administrador</MenuItem>
-                            <MenuItem value="ROLE_PERSONAL_ACCESS">Personal</MenuItem>
-                        </TextField>
-                        )}
-
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{mt: 3, mb: 2, backgroundColor: '#25316D', borderRadius: 5, width: '100%', textTransform: 'none', fontSize: '18px'}}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? <CircularProgress size={24} /> : "Guardar"}
-                        </Button>
-                    </Box>
-                </DialogContent>
-            </Dialog>
 
             {/* Modal para ver detalles */}
             <Drawer
@@ -531,7 +404,7 @@ const GestionUsuarios = () => {
                 <Box bgcolor="white" p={2} borderRadius={2} sx={{width: '24rem', margin: 1}}>
                     <Typography variant="h6" fontWeight="bold" color='#FF9149'>Información</Typography>
                     <ul style={{paddingLeft: 22}}>
-                        <li>Nombre completo: {selectedOne.nombre} {selectedOne.apellidos}</li>
+                        <li>Nombre completo: {notificacion.selectedOne.nombre} {notificacion.selectedOne.apellidos}</li>
                         <li>Correo: {selectedOne.correo}</li>
                         <li>Rol: {traducirRol(selectedOne.rol)} </li>
                         <li>Estado: {selectedOne.estado}</li>
@@ -542,7 +415,7 @@ const GestionUsuarios = () => {
             )}
             </Drawer>
 
-            {/* Modal para cambiar el estado */}
+            {/* Modal para cambiar el estado 
             <Dialog open={openStatusModal} onClose={handleCloseStatusModal}>
                 <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
                     Confirmación
@@ -585,10 +458,98 @@ const GestionUsuarios = () => {
                     </Box>
                     </Box>
                 </DialogContent>
+            </Dialog>*/}
+
+            {/* Modal para aprobar solicitud */}
+            <Dialog open={openAprobarModal} onClose={handleCloseAprobarModal}>
+                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+                    Confirmación
+                    <IconButton
+                    aria-label="close"
+                    onClick={handleCloseStatusModal}
+                    sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: 8,
+                        color: 'white',
+                    }}
+                    >
+                    <Close />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={{ p: 2.5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Typography variant="h6" sx={{color:'#25316D', fontWeight:'bold', paddingBottom: 1, textAlign: 'center'}}>
+                        ¿Deseas aprobar la solicitud de cuenta del usuario?
+                    </Typography>
+                    <Typography variant="body1" sx={{color: 'black', fontStyle: 'italic', paddingBottom: 2, textAlign: 'center'}}>
+                        La solicitud será aprobada automaticamente
+                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, paddingTop: 1.5}}>
+                        <Button
+                        onClick={handleCloseAprobarModal}
+                        sx={{backgroundColor: '#7E7E7E', color: 'white', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Cancelar
+                        </Button>
+                        <Button
+                        onClick={handleAprobar}
+                        variant="contained"
+                        sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Confirmar
+                        </Button>
+                    </Box>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+
+            {/* Modal para rechazar solicitud */}
+            <Dialog open={openRechazarModal} onClose={handleCloseRechazarModal}>
+                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+                    Confirmación
+                    <IconButton
+                    aria-label="close"
+                    onClick={handleCloseStatusModal}
+                    sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: 8,
+                        color: 'white',
+                    }}
+                    >
+                    <Close />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={{ p: 2.5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Typography variant="h6" sx={{color:'#25316D', fontWeight:'bold', paddingBottom: 1, textAlign: 'center'}}>
+                        ¿Deseas rechazar la solicitud de cuenta del usuario?
+                    </Typography>
+                    <Typography variant="body1" sx={{color: 'black', fontStyle: 'italic', paddingBottom: 2, textAlign: 'center'}}>
+                        La solicitud será rechazada automaticamente
+                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, paddingTop: 1.5}}>
+                        <Button
+                        onClick={handleCloseRechazarModal}
+                        sx={{backgroundColor: '#7E7E7E', color: 'white', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Cancelar
+                        </Button>
+                        <Button
+                        onClick={handleRechazar}
+                        variant="contained"
+                        sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Confirmar
+                        </Button>
+                    </Box>
+                    </Box>
+                </DialogContent>
             </Dialog>
         <ToastContainer />
         </Box>
     );
 }
 
-export default GestionUsuarios;
+export default NuevasCuentas;

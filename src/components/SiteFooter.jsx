@@ -1,6 +1,9 @@
 import React from "react";
 import { Box, Typography, Link } from "@mui/material";
-import { Facebook, Instagram, WhatsApp, Email } from "@mui/icons-material";
+import { Email } from "@mui/icons-material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTiktok, faFacebook, faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+
 import "../styles/SiteFooter.css";
 
 const SiteFooter = () => {
@@ -34,13 +37,15 @@ const SiteFooter = () => {
                     </Link>
                 </Box>
 
-                {/* Contacto */}
+                {/* Contacto */} 
                 <Box className="footer-section">
                 <Typography variant="h6">CONTACTO</Typography>
                 <Box className="social-icons">
-                    <Link href="https://www.facebook.com/BukiExpress" style={{ color: '#39405C'}} className="icon"><Facebook /></Link>
-                    <Link href="https://www.instagram.com/bukiexpress" style={{ color: '#39405C'}} className="icon"><Instagram /></Link>
-                    <Link href="https://api.whatsapp.com/message/IINJDTEPLSM6N1?autoload=1&app_absent=0" style={{ color: '#39405C'}} className="icon"><WhatsApp /></Link>
+                    <Link href="https://www.facebook.com/BukiExpress" style={{ color: '#39405C'}} className="icon"><FontAwesomeIcon icon={faFacebook}/></Link>
+                    <Link href="https://www.tiktok.com/@buki.express" style={{ color: '#39405C' }} className="icon" target="_blank">
+                        <FontAwesomeIcon icon={faTiktok}/>
+                    </Link>
+                    <Link href="https://api.whatsapp.com/message/IINJDTEPLSM6N1?autoload=1&app_absent=0" style={{ color: '#39405C'}} className="icon"><FontAwesomeIcon icon={faWhatsapp}/></Link>
                     <Link href="mailto:bukiexpress2020@gmail.com" style={{ color: '#39405C'}} className="icon"><Email /></Link>
                 </Box>
                 </Box>

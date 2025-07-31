@@ -16,6 +16,7 @@ import GestionUsuarios from "../pages/GestionUsuarios";
 import NotFoundPage from "../pages/NotFoundPage";
 import SystemLayout from "../components/SystemLayout";
 import SiteLayout from "../components/SiteLayout";
+import NuevasCuentas from "../pages/NuevasCuentas";
 
 export const RoutesConfig = () => {
     const { user } = useContext(AuthContext);
@@ -29,6 +30,7 @@ export const RoutesConfig = () => {
                     <Route path="/repartidores" element={<GestionRepartidores />}/>
                     <Route path="/socios" element={<GestionSocios />}/>
                     <Route path="/usuarios" element={<GestionUsuarios />}/>
+                    <Route path="/nuevas-cuentas" element={<NuevasCuentas />}/>
                 </Route>
             ) : (
                 <Route element={<SiteLayout />}>
