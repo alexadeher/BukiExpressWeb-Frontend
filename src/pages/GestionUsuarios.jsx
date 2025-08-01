@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Box, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
 import { Search, Add, Edit, Close, ArrowBack, Delete } from "@mui/icons-material";
-import { getUsuarios, crearUsuario, changeStatus, editUsuario } from "../api/usuarios";
+import { getUsuarios, crearUsuario, changeStatus, editUsuario, eliminarUsuario } from "../api/usuarios";
 import Logo from "../assets/logoHorizontal.png";
 
 const GestionUsuarios = () => {
@@ -23,6 +23,7 @@ const GestionUsuarios = () => {
     const [correo, setCorreo] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [rol, setRol]= useState("");
+    const [estado, setEstado] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     const [showtoas, setShowtoas] = useState(false);
@@ -111,7 +112,6 @@ const GestionUsuarios = () => {
         setContrasena("");
     };
 
-
       // Manejar modal de agregar/editar usuario
     const handleOpenModalUsuario = (usuario = null) => {
         setCurrentUsuario(usuario);
@@ -152,17 +152,19 @@ const GestionUsuarios = () => {
                     correo,
                     rol
                 });
+                //console.log("Respuesta de editar usuario:", response);
+
             } else {
                 // Modo agregar
                 response = await crearUsuario(nombre, apellidos, correo, contrasena, rol);
             }
             
             //console.log("Respuesta de la API:", response);
-
             if (response.type === "ERROR") {
                 toast.error(response.text);
             } else if (response.type === "SUCCESS") {
                 toast.success(response.text);
+                handleCloseModalUsuario();
             } else if (response.type === "WARNING") {
                 toast.warning(response.text);
             }
@@ -173,6 +175,7 @@ const GestionUsuarios = () => {
             setIsLoading(false);
         }
     };
+    //console.log("selectedOne", selectedOne);
 
     // Manejar modal de detalles del usuario
     const handleOpenModal = (usuario) => {
@@ -185,9 +188,42 @@ const GestionUsuarios = () => {
         setSelectedOne(null);
     };
 
+    // Manejar modal de eliminar usuario
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [selectedUsuario, setSelectedUsuario] = useState(null);
+
+    const handleOpenDeleteModal = (usuario) => {
+        setSelectedUsuario(usuario);
+        setOpenDeleteModal(true);
+    };  
+
+    const handleCloseDeleteModal = () => {
+        setOpenDeleteModal(false);
+        setSelectedUsuario(null);
+    };
+
+    const handleDelete = async () => {
+        try {
+            const response = await eliminarUsuario(selectedUsuario);
+            if (response.type === "SUCCESS") {  
+                toast.success(response.text);
+                // Actualizar el estado local
+                setUsuarios(usuarios.filter((cat) => cat.id !== selectedUsuario.id));   
+            } else {
+                toast.error(response.text || "Error al eliminar el usuario");   
+            }
+            handleCloseDeleteModal();
+        } catch (error) {
+            console.error("Error al eliminar el usuario:", error);
+            toast.error(
+                error.response?.data?.message || "Error al eliminar el usuario"
+            );
+            handleCloseDeleteModal();
+        }
+    }
+
       // Estados para el modal de confirmación de cambio de status
     const [openStatusModal, setOpenStatusModal] = useState(false);
-    const [selectedUsuario, setSelectedUsuario] = useState(null);
 
       // Función para abrir el modal de confirmación
     const handleOpenStatusModal = (usuario) => {
@@ -209,7 +245,7 @@ const GestionUsuarios = () => {
             const response = await changeStatus(selectedUsuario.id);
 
             if (response.type === "SUCCESS") {
-                toast.success(response.text);
+                toast.success("Estado cambiado exitosamente");
                 // Actualizar el estado local
                 setUsuarios(
                     usuarios.map((cat) =>
@@ -339,7 +375,7 @@ const GestionUsuarios = () => {
                                                 <Edit />
                                             </IconButton>
                                             <IconButton
-                                                onClick={() => handleOpenModalUsuario(usuario)}
+                                                onClick={() => handleOpenDeleteModal(usuario)}
                                                 sx={{
                                                 backgroundColor: '#25316D',
                                                 color: 'white',
@@ -488,6 +524,51 @@ const GestionUsuarios = () => {
                 </DialogContent>
             </Dialog>
 
+            {/* Modal para eliminar un usuario */}
+            <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
+                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+                    Confirmación
+                    <IconButton
+                    aria-label="close"
+                    onClick={handleCloseDeleteModal}
+                    sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: 8,
+                        color: 'white',
+                    }}
+                    >
+                    <Close />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={{ p: 2.5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Typography variant="h6" sx={{color:'#25316D', fontWeight:'bold', paddingBottom: 1, textAlign: 'center'}}>
+                        ¿Deseas eliminar al usuario: "
+                        {selectedUsuario?.nombre}"?
+                    </Typography>
+                    <Typography variant="body1" sx={{color: 'black', fontStyle: 'italic', paddingBottom: 2, textAlign: 'center'}}>
+                        No podrás recuperar el registro de usuario después de eliminarlo
+                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, paddingTop: 1.5}}>
+                        <Button
+                        onClick={handleCloseDeleteModal}
+                        sx={{backgroundColor: '#7E7E7E', color: 'white', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Cancelar
+                        </Button>
+                        <Button
+                        onClick={handleDelete}
+                        variant="contained"
+                        sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Confirmar
+                        </Button>
+                    </Box>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+
             {/* Modal para ver detalles */}
             <Drawer
             anchor="right"
@@ -534,7 +615,7 @@ const GestionUsuarios = () => {
                         <li>Nombre completo: {selectedOne.nombre} {selectedOne.apellidos}</li>
                         <li>Correo: {selectedOne.correo}</li>
                         <li>Rol: {traducirRol(selectedOne.rol)} </li>
-                        <li>Estado: {selectedOne.estado}</li>
+                        <li>Estado: {selectedOne.estado === true ? 'Activo' : selectedOne.estado === false ? 'Inactivo' : 'No definido'}</li>
                     </ul>
                 </Box>
                 </Box>

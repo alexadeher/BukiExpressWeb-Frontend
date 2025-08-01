@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Box, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
-import { Search, CheckCircle, Close, ArrowBack, Cancel } from "@mui/icons-material";
-import { getUsuarios, crearUsuario, changeStatus, editUsuario } from "../api/usuarios";
-import { aprobarUsuario, getNotificaciones, rechazarUsuario } from "../api/notificaciones";
+import { Search, CheckCircle, Close, ArrowBack, Cancel, Delete } from "@mui/icons-material";
+import { aprobarUsuario, getNotificaciones, rechazarUsuario, eliminarNotificacion } from "../api/notificaciones";
 import Logo from "../assets/logoHorizontal.png";
 
 const NuevasCuentas = () => {
@@ -20,16 +19,16 @@ const NuevasCuentas = () => {
     // Estados de modal de detalles
     const [openDetailsModal, setOpenDetailsModal] = useState(false);
     const [selectedOne, setSelectedOne] = useState(null);
-
+    
     // Drawer - traducir rol
     const traducirRol = (rol) => {
         switch (rol) {
             case 'ROLE_ADMIN_ACCESS':
-            return 'Administrador';
+                return 'Administrador';
             case 'ROLE_PERSONAL_ACCESS':
-            return 'Personal';
+                return 'Personal';
             default:
-            return rol;
+                return rol;
         }
     };
 
@@ -94,31 +93,24 @@ const NuevasCuentas = () => {
         setPage(0);
     };
 
-    const handleCloseModalUsuario = () => {
-        setOpenAddModal(false);
-        setCurrentUsuario(null);
-        resetForm();
-    };
-
     // Manejo de botón aprobar
     const [openAprobarModal, setOpenAprobarModal] = useState(false);
-    const [currentNotificacion, setCurrentNotificacion] = useState(null);
-    
+
     const handleOpenAprobarModal = (notificacion) => {
-        setCurrentNotificacion(notificacion);
+        setSelectedNotificacion(notificacion);
         setOpenAprobarModal(true);
     };
     
     const handleCloseAprobarModal = () => {
         setOpenAprobarModal(false); 
-        setCurrentNotificacion(null);
+        setSelectedNotificacion(null);
     };
 
     const handleAprobar = async () => {
         //console.log(currentNotificacion)
         try {
             const response = await aprobarUsuario({
-                id: currentNotificacion.id,
+                id: selectedNotificacion.id,                
                 comentarios: "Solicitud aprobada por el administrador"
             });
             toast.success(response?.data?.text || "Solicitud aprobada correctamente");
@@ -127,7 +119,7 @@ const NuevasCuentas = () => {
             console.error("Error al aprobar la solicitud:", error);
             toast.error(error.response?.data?.text || "Error al aprobar la solicitud");
         } finally {
-            handleCloseRechazarModal();
+            handleCloseAprobarModal();
         }
     };
 
@@ -162,61 +154,49 @@ const NuevasCuentas = () => {
         }
     };
 
+    // Manejar modal de eliminar notificación del usuario
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+    const handleOpenDeleteModal = (notificacion) => {
+        setSelectedNotificacion(notificacion);
+        setOpenDeleteModal(true);
+    };  
+
+    const handleCloseDeleteModal = () => {
+        setOpenDeleteModal(false);
+        setSelectedNotificacion(null);
+    };
+
+    const handleDelete = async () => {
+        try {
+            const response = await eliminarNotificacion(selectedNotificacion);
+            if (response.type === "SUCCESS") {  
+                toast.success(response.text);
+                // Actualizar el estado local
+                setNotificaciones(notificaciones.filter((cat) => cat.id !== selectedNotificacion.id));   
+            } else {
+                toast.error(response.text || "Error al eliminar el usuario");   
+            }
+            handleCloseDeleteModal();
+        } catch (error) {
+            console.error("Error al eliminar el usuario:", error);
+            toast.error(
+                error.response?.data?.message || "Error al eliminar el usuario"
+            );
+            handleCloseDeleteModal();
+        }
+    }
+
+
     // Manejar modal de detalles del usuario
     const handleOpenModal = (notificacion) => {
-        setSelectedOne(notificacion.usuario);
+        setSelectedOne(notificacion);
         setOpenDetailsModal(true);
     };
 
     const handleCloseModal = () => {
         setOpenDetailsModal(false)
         setSelectedOne(null);
-    };
-
-      // Estados para el modal de confirmación de cambio de status
-    const [openStatusModal, setOpenStatusModal] = useState(false);
-    const [selectedUsuario, setSelectedUsuario] = useState(null);
-
-      // Función para abrir el modal de confirmación
-    const handleOpenStatusModal = (usuario) => {
-        setSelectedUsuario(usuario);
-        setOpenStatusModal(true);
-    };
-
-    // Función para cerrar el modal de confirmación
-    const handleCloseStatusModal = () => {
-        setOpenStatusModal(false);
-        setSelectedUsuario(null);
-    };
-
-    // Función para cambiar el estado
-    const handleChangeStatus = async () => {
-        try {
-            if(!selectedUsuario) return;
-
-            const response = await changeStatus(selectedUsuario.id);
-
-            if (response.type === "SUCCESS") {
-                toast.success(response.text);
-                // Actualizar el estado local
-                setNotificaciones(
-                    notificaciones.map((cat) =>
-                    cat.id === selectedUsuario.id
-                    ? {...cat, status: !cat.status }
-                    : cat
-                )
-                );
-            } else {
-                toast.error(response.text || "Error al cambiar el estado");
-            }
-                handleCloseStatusModal();
-            } catch (error) {
-                console.error("Error al cambiar el estado:", error);
-                toast.error(
-                    error.response?.data?.message || "Error al cambiar el estado"
-                );
-                handleCloseStatusModal();
-            }
     };
 
     return (
@@ -326,6 +306,17 @@ const NuevasCuentas = () => {
                                             >
                                                 <Cancel />
                                             </IconButton>
+                                            <IconButton
+                                                onClick={() => handleOpenDeleteModal(notificacion)}
+                                                sx={{
+                                                backgroundColor: '#25316D',
+                                                color: 'white',
+                                                borderRadius: '50%',
+                                                padding: '6px',
+                                                }}
+                                            >
+                                                <Delete />
+                                            </IconButton>
                                         </TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>
                                             <Button  variant="contained" onClick={() => handleOpenModal(notificacion.usuario)} sx={{
@@ -404,10 +395,10 @@ const NuevasCuentas = () => {
                 <Box bgcolor="white" p={2} borderRadius={2} sx={{width: '24rem', margin: 1}}>
                     <Typography variant="h6" fontWeight="bold" color='#FF9149'>Información</Typography>
                     <ul style={{paddingLeft: 22}}>
-                        <li>Nombre completo: {notificacion.selectedOne.nombre} {notificacion.selectedOne.apellidos}</li>
+                        <li>Nombre completo: {selectedOne.nombre} {selectedOne.apellidos}</li>
                         <li>Correo: {selectedOne.correo}</li>
                         <li>Rol: {traducirRol(selectedOne.rol)} </li>
-                        <li>Estado: {selectedOne.estado}</li>
+                        <li>Estado: {selectedOne.estado === true ? 'Activo' : selectedOne.estado === false ? 'Inactivo' : 'No definido'}</li>
                     </ul>
                 </Box>
                 </Box>
@@ -415,58 +406,13 @@ const NuevasCuentas = () => {
             )}
             </Drawer>
 
-            {/* Modal para cambiar el estado 
-            <Dialog open={openStatusModal} onClose={handleCloseStatusModal}>
-                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
-                    Confirmación
-                    <IconButton
-                    aria-label="close"
-                    onClick={handleCloseStatusModal}
-                    sx={{
-                        position: "absolute",
-                        right: 8,
-                        top: 8,
-                        color: 'white',
-                    }}
-                    >
-                    <Close />
-                    </IconButton>
-                </DialogTitle>
-                <DialogContent>
-                    <Box sx={{ p: 2.5, alignItems: 'center', justifyContent: 'center'}}>
-                    <Typography variant="h6" sx={{color:'#25316D', fontWeight:'bold', paddingBottom: 1, textAlign: 'center'}}>
-                        ¿Deseas cambiar el estado del usuario: "
-                        {selectedUsuario?.nombre}"?
-                    </Typography>
-                    <Typography variant="body1" sx={{color: 'black', fontStyle: 'italic', paddingBottom: 2, textAlign: 'center'}}>
-                        El cambio de estado será aplicado automaticamente
-                    </Typography>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, paddingTop: 1.5}}>
-                        <Button
-                        onClick={handleCloseStatusModal}
-                        sx={{backgroundColor: '#7E7E7E', color: 'white', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
-                        >
-                        Cancelar
-                        </Button>
-                        <Button
-                        onClick={handleChangeStatus}
-                        variant="contained"
-                        sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
-                        >
-                        Confirmar
-                        </Button>
-                    </Box>
-                    </Box>
-                </DialogContent>
-            </Dialog>*/}
-
             {/* Modal para aprobar solicitud */}
             <Dialog open={openAprobarModal} onClose={handleCloseAprobarModal}>
                 <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
                     Confirmación
                     <IconButton
                     aria-label="close"
-                    onClick={handleCloseStatusModal}
+                    onClick={handleCloseAprobarModal}
                     sx={{
                         position: "absolute",
                         right: 8,
@@ -510,7 +456,7 @@ const NuevasCuentas = () => {
                     Confirmación
                     <IconButton
                     aria-label="close"
-                    onClick={handleCloseStatusModal}
+                    onClick={handleCloseRechazarModal}
                     sx={{
                         position: "absolute",
                         right: 8,
@@ -538,6 +484,51 @@ const NuevasCuentas = () => {
                         </Button>
                         <Button
                         onClick={handleRechazar}
+                        variant="contained"
+                        sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Confirmar
+                        </Button>
+                    </Box>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+
+            {/* Modal para eliminar un usuario */}
+            <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
+                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+                    Confirmación
+                    <IconButton
+                    aria-label="close"
+                    onClick={handleCloseDeleteModal}
+                    sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: 8,
+                        color: 'white',
+                    }}
+                    >
+                    <Close />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={{ p: 2.5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Typography variant="h6" sx={{color:'#25316D', fontWeight:'bold', paddingBottom: 1, textAlign: 'center'}}>
+                        ¿Deseas eliminar la notificación del usuario: "
+                        {selectedNotificacion?.usuario.nombre}"?
+                    </Typography>
+                    <Typography variant="body1" sx={{color: 'black', fontStyle: 'italic', paddingBottom: 2, textAlign: 'center'}}>
+                        No podrás recuperar la notificación del usuario después de eliminarlo
+                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, paddingTop: 1.5}}>
+                        <Button
+                        onClick={handleCloseDeleteModal}
+                        sx={{backgroundColor: '#7E7E7E', color: 'white', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Cancelar
+                        </Button>
+                        <Button
+                        onClick={handleDelete}
                         variant="contained"
                         sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
                         >

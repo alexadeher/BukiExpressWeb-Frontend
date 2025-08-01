@@ -167,11 +167,11 @@ const GestionSocios = () => {
                     </select>
                 </Box>
             </Box>
-            {/* Título y botón de Agregar */}
+            {/* Título */}
             <Box sx={{marginBottom: '10px', padding: '10px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Typography variant="h5" sx={{align:'left', fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: 30, color: '#25316D'}}>Socios</Typography>
             </Box>
-            {/* Tabla de gestón de socios */}
+            {/* Tabla de gestión de socios */}
             <Box sx={{maxWidth: '1350px', margin: 'auto', textAlign: 'center', padding: '0 20px'}}>
                 <TableContainer 
                     component={Paper}
@@ -247,6 +247,10 @@ const GestionSocios = () => {
                         page={page}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
+                        labelRowsPerPage="Filas por página"
+                        labelDisplayedRows={({ from, to, count }) =>
+                            `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`
+                        }
                     />
                 </TableContainer>
             </Box>

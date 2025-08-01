@@ -46,7 +46,21 @@ export const crearUsuario = async (nombre, apellidos, correo, contrasena, rol) =
 };
 
 export const editUsuario = async (usuarioData) => {
-    return await api.put(`${endpoint}/actualizar`, usuarioData);
+    try {
+        const response = await api.put(
+            `${endpoint}/actualizar`,
+            usuarioData,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwt")}`
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error al editar el usuario:", error);
+        throw error;
+    }
 };
 
 export const changeStatus = async (id) => {
@@ -69,3 +83,19 @@ export const changeStatus = async (id) => {
         throw error;
     }
 };
+
+export const eliminarUsuario = async (usuario) => {
+    try {
+        const response = await api.delete(`${endpoint}/eliminar`,
+            {
+                data: usuario, 
+                headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error al eliminar el usuario:", error);
+        throw error;
+    }
+}

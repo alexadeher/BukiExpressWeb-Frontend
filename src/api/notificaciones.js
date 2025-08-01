@@ -6,6 +6,10 @@ export const getNotificaciones = async () => {
     return await api.get(`${endpoint}/all`);
 }
 
+export const getNotificacion = async (id) => {
+    return await api.get(`${endpoint}/${id}`); 
+}
+
 export const getPendientes = async () => {
     return await api.get(`${endpoint}/pendientes`);
 }
@@ -48,6 +52,22 @@ export const rechazarUsuario = async (body) => {
         "Error al rechazar al usuario:",
         error
         );
+        throw error;
+    }
+}
+
+export const eliminarNotificacion = async (notificacion) => {
+    try {
+        const response = await api.delete(`${endpoint}/eliminar`,
+            {
+                data: notificacion, 
+                headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error al eliminar el usuario:", error);
         throw error;
     }
 }
