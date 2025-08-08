@@ -38,7 +38,7 @@ const RepartidorForm = () => {
   const [nombre, setNombre] = useState('');
   const [apellidos, setApellidos] = useState(''); 
   const [edad, setEdad] = useState('');
-  const [ubicacion, setUbicacion] = useState('');
+  const [domicilio, setDomicilio] = useState('');
   const [telefono, setTelefono] = useState('');
   const [telefonoSecundario, setTelefonoSecundario] = useState('');
   const [moto, setMoto] = useState('');
@@ -91,7 +91,7 @@ const RepartidorForm = () => {
     // Función para validar el paso 2 del formulario
   const validateStepThree = () => {
     const newErrors = {};
-    if (!horarioPreferido) newErrors.horarioPreferido = true;
+    //if (!horarioPreferido) newErrors.horarioPreferido = true;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -277,9 +277,9 @@ const RepartidorForm = () => {
                 label="Lugar de residencia"
                 variant="filled"
                 size="small"
-                value={formData.ubicacion}
+                value={formData.domicilio}
                 onChange={handleChange}
-                error={errors.ubicacion}
+                error={errors.domicilio}
               />
             </div>
             <div className="form-input">
@@ -414,10 +414,10 @@ const RepartidorForm = () => {
               </div>
               <div className="form-input">
                 <FileInput
-                  name="domicilio"
+                  name="comprobanteDomicilio"
                   label="Comprobante de domicilio"
-                  error={errors.domicilio}
-                  file={formData.domicilio}
+                  error={errors.comprobanteDomicilio}
+                  file={formData.comprobanteDomicilio}
                   onChange={handleFileChange}
                 />
               </div>
@@ -444,7 +444,7 @@ const RepartidorForm = () => {
                 name="cuenta"
                 onChange={handleChange}
                 inputProps={{
-                maxLength: 18,
+                maxLength: 16,
                 inputMode: 'numeric',
                 pattern: '[0-9]*'
               }}

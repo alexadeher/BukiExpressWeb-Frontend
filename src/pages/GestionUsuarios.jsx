@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { Box, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
+import { Box, Select, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
 import { Search, Add, Edit, Close, ArrowBack, Delete } from "@mui/icons-material";
 import { getUsuarios, crearUsuario, changeStatus, editUsuario, eliminarUsuario } from "../api/usuarios";
 import Logo from "../assets/logoHorizontal.png";
@@ -283,16 +283,23 @@ const GestionUsuarios = () => {
                         style={{ border: 'none', outline: 'none', width: '300px', padding: '5px', backgroundColor: '#EAEAEA'}}
                     />
                 </Box>
-                <Box sx={{borderRadius: '20px', border: '1px solid #ccc', padding: '5px 10px', backgroundColor: '#EAEAEA'}}>
-                    <select 
+                <Box sx={{'& .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',},
+                            '& .MuiSelect-select': {
+                                padding: '6px 12px',},
+                            '& .MuiInputBase-root': {
+                                borderRadius: '12px',
+                            }, borderRadius: '20px', border: '1px solid #ccc', padding: '5px 10px', backgroundColor: '#EAEAEA'}}>
+                    <Select  
                         value={statusFilter}
+                        displayEmpty
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        style={{border: 'none', outline: 'none', fontSize: '14px', padding: '5px', borderRadius: '10px', backgroundColor: '#EAEAEA'}}
+                        sx={{border: 'none', outline: 'none', fontSize: '14px', borderRadius: '10px', backgroundColor: '#EAEAEA'}}
                     >
-                        <option value="all">Todos</option>
-                        <option value="active">Activos</option>
-                        <option value="inactive">Inactivos</option>
-                    </select>
+                        <MenuItem value="all">Todos</MenuItem>
+                        <MenuItem value="active">Activos</MenuItem>
+                        <MenuItem value="inactive">Inactivos</MenuItem>
+                    </Select>
                 </Box>
             </Box>
             {/* Título y botón de Agregar */}
@@ -362,29 +369,38 @@ const GestionUsuarios = () => {
                                                 sx={{cursor: 'pointer'}}
                                             />
                                         </TableCell>
-                                        <TableCell sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                                            <IconButton
+                                        <TableCell sx={{ textAlign: 'center' }}>
+                                            <Box
+                                                sx={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: '10px',
+                                                }}
+                                            >
+                                                <IconButton
                                                 onClick={() => handleOpenModalUsuario(usuario)}
                                                 sx={{
-                                                backgroundColor: '#25316D',
-                                                color: 'white',
-                                                borderRadius: '50%',
-                                                padding: '6px',
+                                                    backgroundColor: '#25316D',
+                                                    color: 'white',
+                                                    borderRadius: '50%',
+                                                    padding: '6px',
                                                 }}
-                                            >
+                                                >
                                                 <Edit />
-                                            </IconButton>
-                                            <IconButton
+                                                </IconButton>
+                                                <IconButton
                                                 onClick={() => handleOpenDeleteModal(usuario)}
                                                 sx={{
-                                                backgroundColor: '#25316D',
-                                                color: 'white',
-                                                borderRadius: '50%',
-                                                padding: '6px',
+                                                    backgroundColor: '#25316D',
+                                                    color: 'white',
+                                                    borderRadius: '50%',
+                                                    padding: '6px',
                                                 }}
-                                            >
+                                                >
                                                 <Delete />
-                                            </IconButton>
+                                                </IconButton>
+                                            </Box>
                                         </TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>
                                             <Button  variant="contained" onClick={() => handleOpenModal(usuario)} sx={{
@@ -433,12 +449,15 @@ const GestionUsuarios = () => {
                     }
                 }}         
             >
-                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white'}}>
+                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
                     {currentUsuario ? "Editar usuario" : "Nuevo usuario"}
                     <IconButton
                         aria-label='close'
                         onClick={handleCloseModalUsuario}
-                        sx={{position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500]}}
+                        sx={{position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: 'white'}}
                     >
                         <Close/>
                     </IconButton>
@@ -535,7 +554,7 @@ const GestionUsuarios = () => {
                         position: "absolute",
                         right: 8,
                         top: 8,
-                        color: 'white',
+                        color: 'white'
                     }}
                     >
                     <Close />

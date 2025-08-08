@@ -34,3 +34,29 @@ export const changeStatus = async (id) => {
         throw error;
     }
 };
+
+export const deleteSocio = async (socio) => {
+    try {
+        const response = await api.delete(`${endpoint}/eliminar`,
+            {
+                data: socio, 
+                headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error al eliminar al socio:", error);
+        throw error;
+    }
+}
+
+export const contarSocios = async () => {
+    try {
+        const response = await api.get(`${endpoint}/contar`);
+        return response.data;
+    } catch (error) {
+        console.error("Error al contar los espacios:", error);
+        throw error;
+    }
+};

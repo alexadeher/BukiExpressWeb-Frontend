@@ -25,7 +25,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Formulario enviado con:", { correo, password });
+    //console.log("Formulario enviado con:", { correo, password });
     await handleLogin(correo, password);
     const token = localStorage.getItem("jwt");
     if (token) {

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Box, Typography, Button, IconButton, Checkbox, FormControlLabel } from '@mui/material';
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
-import Socios from "../assets/Socios.png"
-import SocioSection from "../assets/SocioSection.png"
-import Repartidores from "../assets/Repartidores.png"
-import Inicio from "../assets/Inicio.png"
+import AvisoPrivacidad from "../assets/AvisoPrivacidad.png"
+import Reglamento from "../assets/Reglamento.png"
+import Obligaciones from "../assets/Obligaciones.png"
+import Prohibiciones from "../assets/Prohibiciones.png"
 
 const ModalAvisoPrivacidad = ({ open, onClose, onAccept }) => {
-    const images = [Socios, SocioSection, Repartidores, Inicio];
+    const images = [AvisoPrivacidad, Reglamento, Obligaciones, Prohibiciones];
     const [index, setIndex] = useState(0);
     const [accepted, setAccepted] = useState(false);
     const [touched, setTouched] = useState(false);

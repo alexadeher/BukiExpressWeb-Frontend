@@ -1,11 +1,11 @@
-// Importar dependencias necesarias
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { Home, Person3, Groups3,  Person, FolderShared, Logout, ChevronLeft, Close } from "@mui/icons-material";
 import SidebarItem from "./SidebarItem";
 import useMediaQuery from "../hooks/useMediaQuery";
 import LogoComponent from "./LogoComponent";
 import "../styles/Sidebar.css"; 
+import { AuthContext } from "../context/AuthContext";
 
 //Definir el componente Sidebar que renderiza la barra lateral de navegación
 const Sidebar = ({ onClose }) => {
@@ -15,6 +15,12 @@ const Sidebar = ({ onClose }) => {
     const isMobile = useMediaQuery("(max-width: 768px)"); // Verifica si es un dispositivo móvil
     const navigate = useNavigate(); // Hook para navegar a otras rutas
     const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar la apertura del modal
+    
+    const { user } = useContext(AuthContext);
+    //console.log("Usuario actual:", user);
+    const isAdmin = user?.role === "ROLE_ADMIN_ACCESS"; // Verifica si el usuario tiene rol de admin
+    const isPersonal = user?.role === "ROLE_PERSONAL_ACCESS"; // Verifica si el usuario tiene rol de personal
+
 
     // Función para alternar el estado del colapso del sidebar
     const toggleSidebar = () => {
@@ -95,9 +101,10 @@ const Sidebar = ({ onClose }) => {
                 </button>
                 )}
             </div>
-            <div className="sidebar-section">
-                <h2 className="section-title">AFILIACIONES</h2>
-                <nav className="nav-menu">
+            {(isAdmin || isPersonal) && (
+                <div className="sidebar-section">
+                    <h2 className="section-title">AFILIACIONES</h2>
+                    <nav className="nav-menu">
                     <SidebarItem 
                         icon={<Home size={20} />} 
                         text="Home" 
@@ -122,30 +129,35 @@ const Sidebar = ({ onClose }) => {
                         collapsed={collapsed}
                         onClick={isMobile ? onClose : undefined}
                     />
-                </nav>
-            </div>
-            <hr className="sidebar-divider" />
-            <div className="sidebar-section">
-                <h2 className="section-title">SISTEMA</h2>
-                <nav className="nav-menu">
-                    <SidebarItem
+                    </nav>
+                </div>
+                )}
+                {isAdmin && (
+                <>
+                    <hr className="sidebar-divider" />
+                    <div className="sidebar-section">
+                    <h2 className="section-title">SISTEMA</h2>
+                    <nav className="nav-menu">
+                        <SidebarItem
                         icon={<Person size={20} />}
                         text="Usuarios"
                         to="/usuarios"
                         isActive={currentPath === "/usuarios"}
                         collapsed={collapsed}
                         onClick={isMobile ? onClose : undefined}
-                    />
-                    <SidebarItem
+                        />
+                        <SidebarItem
                         icon={<FolderShared size={20} />}
                         text="Nuevas Cuentas"
                         to="/nuevas-cuentas"
                         isActive={currentPath === "/nuevas-cuentas"}
                         collapsed={collapsed}
                         onClick={isMobile ? onClose : undefined}
-                    />
-                </nav>
-            </div>
+                        />
+                    </nav>
+                    </div>
+                </>
+                )}
             <div className="sidebar-footer">
                 <Link 
                     className={`logout-button ${collapsed ? "collapsed" : ""}`}

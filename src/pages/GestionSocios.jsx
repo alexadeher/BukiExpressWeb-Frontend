@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { Box, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, Link, Divider, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
-import { Search, Close, ArrowBack } from "@mui/icons-material";
-import { getSocios, changeStatus } from "../api/socios";
+import { Box, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, Link, Divider, TextField, MenuItem, CircularProgress, Drawer, Select } from "@mui/material";
+import { Search, Close, ArrowBack, Delete } from "@mui/icons-material";
+import { getSocios, changeStatus, deleteSocio } from "../api/socios";
 import Logo from "../assets/logoHorizontal.png";
 
 const GestionSocios = () => {
@@ -82,7 +82,41 @@ const GestionSocios = () => {
         setPage(0);
     };
 
-      // Manejar modal de detalles del usuario
+    // Manejo de eliminación de socio
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [selectedSocio, setSelectedSocio] = useState(null);
+
+    const handleOpenDeleteModal = (socio) => {
+        setSelectedSocio(socio);
+        setOpenDeleteModal(true);
+    };  
+
+    const handleCloseDeleteModal = () => {
+        setOpenDeleteModal(false);
+        setSelectedSocio(null);
+    };
+
+    const handleDelete = async () => {
+        try {
+            const response = await deleteSocio(selectedSocio);
+            if (response.type === "SUCCESS") {  
+                toast.success(response.text);
+                // Actualizar el estado local
+                setSocios(socios.filter((cat) => cat.id !== selectedSocio.id));   
+            } else {
+                toast.error(response.text || "Error al eliminar al socio");   
+            }
+            handleCloseDeleteModal();
+        } catch (error) {
+            console.error("Error al eliminar al socio:", error);
+            toast.error(
+                error.response?.data?.message || "Error al eliminar al socio"
+            );
+            handleCloseDeleteModal();
+        }
+    }
+
+    // Manejar modal de detalles del usuario
     const handleOpenModal = (socio) => {
         setSelectedOne(socio);
         setOpenDetailsModal(true);
@@ -95,7 +129,6 @@ const GestionSocios = () => {
 
       // Estados para el modal de confirmación de cambio de status
     const [openStatusModal, setOpenStatusModal] = useState(false);
-    const [selectedSocio, setSelectedSocio] = useState(null);
 
       // Función para abrir el modal de confirmación
     const handleOpenStatusModal = (socio) => {
@@ -155,16 +188,23 @@ const GestionSocios = () => {
                         style={{ border: 'none', outline: 'none', width: '300px', padding: '5px', backgroundColor: '#EAEAEA'}}
                     />
                 </Box>
-                <Box sx={{borderRadius: '20px', border: '1px solid #ccc', padding: '5px 10px', backgroundColor: '#EAEAEA'}}>
-                    <select 
+                <Box sx={{'& .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',},
+                            '& .MuiSelect-select': {
+                                padding: '6px 12px',},
+                            '& .MuiInputBase-root': {
+                                borderRadius: '12px',
+                            }, borderRadius: '20px', border: '1px solid #ccc', padding: '5px 10px', backgroundColor: '#EAEAEA'}}>
+                    <Select 
                         value={statusFilter}
+                        displayEmpty
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        style={{border: 'none', outline: 'none', fontSize: '14px', padding: '5px', borderRadius: '10px', backgroundColor: '#EAEAEA'}}
+                        sx={{border: 'none', outline: 'none', fontSize: '14px', borderRadius: '10px', backgroundColor: '#EAEAEA'}}
                     >
-                        <option value="all">Todos</option>
-                        <option value="active">Revisados</option>
-                        <option value="inactive">Pendientes</option>
-                    </select>
+                        <MenuItem value="all">Todos</MenuItem>
+                        <MenuItem value="active">Revisados</MenuItem>
+                        <MenuItem value="inactive">Pendientes</MenuItem>
+                    </Select>
                 </Box>
             </Box>
             {/* Título */}
@@ -185,7 +225,7 @@ const GestionSocios = () => {
                     <Table size="small">
                         <TableHead>
                             <TableRow sx={{backgroundColor: '#25316D'}}>
-                                {["#", "Nombre del Establecimiento", "Telefono", "Nombre del Representante", "Producto", "Ubicación", "Estado", "Detalles"].map((header) => (
+                                {["#", "Nombre del establecimiento", "Teléfono", "Nombre del representante", "Producto",  "Estado", "Acciones", "Detalles"].map((header) => (
                                 <TableCell
                                     key={header}
                                     sx={{
@@ -210,7 +250,6 @@ const GestionSocios = () => {
                                         <TableCell sx={{textAlign: 'center'}}>{socio.telefono}</TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>{socio.nombreRepresentante} {socio.apellidosRepresentante}</TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>{socio.producto}</TableCell>
-                                        <TableCell sx={{textAlign: 'center'}}>{socio.ubicacion}</TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>
                                             <Chip 
                                                 label={socio.estado ? 'Revisado' : 'Pendiente'}
@@ -219,6 +258,19 @@ const GestionSocios = () => {
                                                 onClick={() => handleOpenStatusModal(socio)}
                                                 sx={{cursor: 'pointer'}}
                                             />
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: 'center', justifyContent: 'center'}}>
+                                            <IconButton
+                                                onClick={() => handleOpenDeleteModal(socio)}
+                                                sx={{
+                                                backgroundColor: '#25316D',
+                                                color: 'white',
+                                                borderRadius: '50%',
+                                                padding: '6px',
+                                                }}
+                                            >
+                                                <Delete />
+                                            </IconButton>
                                         </TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>
                                             <Button variant="contained" onClick={() => handleOpenModal(socio)} 
@@ -287,6 +339,50 @@ const GestionSocios = () => {
                         </Button>
                         <Button
                         onClick={handleChangeStatus}
+                        variant="contained"
+                        sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Confirmar
+                        </Button>
+                    </Box>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+
+            {/* Modal para eliminar un usuario */}
+            <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
+                <DialogTitle sx={{backgroundColor: '#25316D', color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+                    Confirmación
+                    <IconButton
+                    aria-label="close"
+                    onClick={handleCloseDeleteModal}
+                    sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: 8,
+                        color: 'white',
+                    }}
+                    >
+                    <Close />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={{ p: 2.5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Typography variant="h6" sx={{color:'#25316D', fontWeight:'bold', paddingBottom: 1, textAlign: 'center'}}>
+                        ¿Deseas eliminar al socio de manera permanente"?
+                    </Typography>
+                    <Typography variant="body1" sx={{color: 'black', fontStyle: 'italic', paddingBottom: 2, textAlign: 'center'}}>
+                        No podrás recuperar el registro del socio después de eliminarlo
+                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, paddingTop: 1.5}}>
+                        <Button
+                        onClick={handleCloseDeleteModal}
+                        sx={{backgroundColor: '#7E7E7E', color: 'white', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
+                        >
+                        Cancelar
+                        </Button>
+                        <Button
+                        onClick={handleDelete}
                         variant="contained"
                         sx={{backgroundColor: '#25316D', borderRadius: 5, width: '8rem', textTransform: 'none', fontSize: '18px'}}
                         >

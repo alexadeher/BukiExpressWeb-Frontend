@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { Box, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
+import { Box, Select, Paper, Table, TableContainer, TableHead, TableCell, TableRow, Typography, TableBody, Chip, IconButton, Button, TablePagination, Dialog, DialogTitle, DialogContent, TextField, MenuItem, CircularProgress, Drawer } from "@mui/material";
 import { Search, CheckCircle, Close, ArrowBack, Cancel, Delete } from "@mui/icons-material";
 import { aprobarUsuario, getNotificaciones, rechazarUsuario, eliminarNotificacion } from "../api/notificaciones";
 import Logo from "../assets/logoHorizontal.png";
@@ -215,17 +215,24 @@ const NuevasCuentas = () => {
                         style={{ border: 'none', outline: 'none', width: '300px', padding: '5px', backgroundColor: '#EAEAEA'}}
                     />
                 </Box>
-                <Box sx={{borderRadius: '20px', border: '1px solid #ccc', padding: '5px 10px', backgroundColor: '#EAEAEA'}}>
-                    <select 
+                <Box sx={{'& .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',},
+                            '& .MuiSelect-select': {
+                                padding: '6px 12px',},
+                            '& .MuiInputBase-root': {
+                                borderRadius: '12px',
+                            }, borderRadius: '20px', border: '1px solid #ccc', padding: '5px 10px', backgroundColor: '#EAEAEA'}}>
+                    <Select  
                         value={statusFilter}
+                        displayEmpty
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        style={{border: 'none', outline: 'none', fontSize: '14px', padding: '5px', borderRadius: '10px', backgroundColor: '#EAEAEA'}}
+                        sx={{border: 'none', outline: 'none', fontSize: '14px', borderRadius: '10px', backgroundColor: '#EAEAEA'}}
                     >
-                        <option value="all">Todos</option>
-                        <option value="PENDIENTE">Pendientes</option>
-                        <option value="APROBADO">Aprobados</option>
-                        <option value="RECHAZADO">Rechazados</option>
-                    </select>
+                        <MenuItem value="all">Todos</MenuItem>
+                        <MenuItem value="PENDIENTE">Pendientes</MenuItem>
+                        <MenuItem value="APROBADO">Aprobados</MenuItem>
+                        <MenuItem value="RECHAZADO">Rechazados</MenuItem>
+                    </Select>
                 </Box>
             </Box>
             {/* Título */}
@@ -283,40 +290,49 @@ const NuevasCuentas = () => {
                                                 sx={{cursor: 'pointer'}}
                                             />
                                         </TableCell>*/}
-                                        <TableCell sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '10px'}}>
-                                            <IconButton
-                                                onClick={() => handleOpenAprobarModal(notificacion)}
+                                        <TableCell sx={{ textAlign: 'center' }}>
+                                            <Box
                                                 sx={{
-                                                backgroundColor: '#25316D',
-                                                color: 'white',
-                                                borderRadius: '50%',
-                                                padding: '6px',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: '10px',
                                                 }}
                                             >
-                                                <CheckCircle />
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => handleOpenRechazarModal(notificacion)}
-                                                sx={{
-                                                backgroundColor: '#25316D',
-                                                color: 'white',
-                                                borderRadius: '50%',
-                                                padding: '6px',
-                                                }}
-                                            >
-                                                <Cancel />
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => handleOpenDeleteModal(notificacion)}
-                                                sx={{
-                                                backgroundColor: '#25316D',
-                                                color: 'white',
-                                                borderRadius: '50%',
-                                                padding: '6px',
-                                                }}
-                                            >
-                                                <Delete />
-                                            </IconButton>
+                                                <IconButton
+                                                    onClick={() => handleOpenAprobarModal(notificacion)}
+                                                    sx={{
+                                                    backgroundColor: '#25316D',
+                                                    color: 'white',
+                                                    borderRadius: '50%',
+                                                    padding: '6px',
+                                                    }}
+                                                >
+                                                    <CheckCircle />
+                                                </IconButton>
+                                                <IconButton
+                                                    onClick={() => handleOpenRechazarModal(notificacion)}
+                                                    sx={{
+                                                    backgroundColor: '#25316D',
+                                                    color: 'white',
+                                                    borderRadius: '50%',
+                                                    padding: '6px',
+                                                    }}
+                                                >
+                                                    <Cancel />
+                                                </IconButton>
+                                                <IconButton
+                                                    onClick={() => handleOpenDeleteModal(notificacion)}
+                                                    sx={{
+                                                    backgroundColor: '#25316D',
+                                                    color: 'white',
+                                                    borderRadius: '50%',
+                                                    padding: '6px',
+                                                    }}
+                                                >
+                                                    <Delete />
+                                                </IconButton>
+                                            </Box>
                                         </TableCell>
                                         <TableCell sx={{textAlign: 'center'}}>
                                             <Button  variant="contained" onClick={() => handleOpenModal(notificacion.usuario)} sx={{

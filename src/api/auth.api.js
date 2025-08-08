@@ -3,10 +3,10 @@ import api from './api';
 const endpoint = "/auth";
 
 export const login = async (credenciales) => {
-    console.log("Credenciales enviadas para login:", credenciales); // Muestra las credenciales que se envían
+    //console.log("Credenciales enviadas para login:", credenciales); // Muestra las credenciales que se envían
     return await api.post(`${endpoint}/login`, credenciales)
         .then(response => {
-        console.log("Respuesta del login:", response); // Muestra la respuesta de la API
+        //console.log("Respuesta del login:", response); // Muestra la respuesta de la API
         return response;
         })
         .catch(error => {

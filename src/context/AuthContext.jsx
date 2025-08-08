@@ -33,11 +33,12 @@ export const AuthProvider = ({ children }) => {
       const response = await login({ correo, password });
       if (response.status === 200) {
         // Guardar el JWT y el usuario en el localStorage
-        const { jwt, username, expiration } = response.data;
+        const { jwt, username, role, expiration } = response.data;
+        const userData = { username, role };
         localStorage.setItem("jwt", jwt);
-        localStorage.setItem("user", JSON.stringify({username}));
+        localStorage.setItem("user", JSON.stringify(userData));
         localStorage.setItem("expiration", Date.now() + expiration); // Guardar el tiempo de expiración
-        setUser({username});
+        setUser(userData);
         setError(null);
       } 
     } catch (err) {

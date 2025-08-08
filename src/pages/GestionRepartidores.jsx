@@ -73,7 +73,7 @@ const GestionRepartidores = () => {
             <Box sx={{marginBottom: '10px', padding: '10px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Typography variant="h5" sx={{align:'left', fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: 30, color: '#25316D'}}>Repartidores</Typography>
             </Box>
-            {/* Tabla de gestón de responsbales */}
+            {/* Tabla de gestión de repartidores */}
             <Box sx={{maxWidth: '1350px', margin: 'auto', textAlign: 'center', padding: '0 20px'}}>
                 <TableContainer 
                     component={Paper}
@@ -87,7 +87,7 @@ const GestionRepartidores = () => {
                     <Table size="small">
                         <TableHead>
                             <TableRow sx={{backgroundColor: '#25316D'}}>
-                                {["#", "Nombre", "Edad", "Ubicación", "Motocicleta", "Mochila", "Trabajo", "Estado", "Detalles"].map((header) => (
+                                {["#", "Nombre", "Edad", "Teléfono", "Domicilio", "Estado", "Acciones", "Detalles"].map((header) => (
                                 <TableCell
                                     key={header}
                                     sx={{
