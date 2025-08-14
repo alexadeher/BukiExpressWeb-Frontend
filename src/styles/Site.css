@@ -58,10 +58,12 @@
     margin-top: -3rem;
     background: white;
     padding: 2rem 2rem;
-    border-radius: 20px;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    border-radius: 3;
     width: 75%;
     margin: -5rem auto 2rem auto;
+    transition: all 0.3s ease;
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(209, 215, 239, 1)
 }
 
 .icon-section {
@@ -144,19 +146,27 @@
 }
 
 .services-card {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     height: 100%;
     width: 350px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
     border-radius: 12px;
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    width: "260px";
 }
 
 .services-card:hover {
-    transform: scale(1.03);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(255,145,73,0.4);
+}
+
+.services-card:hover svg {
+    transform: scale(1.2);
 }
 
 .icon2-section {
@@ -188,6 +198,7 @@
 
 .join-body {
     padding-left: 5rem;
+    padding-right: 5rem;
 }
 
 .form-section {
@@ -202,10 +213,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 3rem;
+    gap: 2rem;
     flex-wrap: wrap;
-    margin-top: 2rem;
-    padding: 2rem 2rem;
+    padding: 2rem 1rem;
 }
 
 .divider {
@@ -278,7 +288,7 @@
 }
 
 .benefits-content {
-    background-attachment: white;
+    background-attachment: #f6f6f6;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -291,7 +301,10 @@
 .benefits-section {
     padding: 1rem 4rem;
     margin: 1rem 0;
+    padding-block: 0;
+    margin-bottom: 0;
     text-align: center;
+    background-color: #f6f6f6;
 }
 
 .benefits-image {

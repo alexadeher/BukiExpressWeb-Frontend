@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Link } from "@mui/material";
-import { Email } from "@mui/icons-material";
+import { Email, Call } from "@mui/icons-material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTiktok, faFacebook, faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
@@ -39,15 +39,16 @@ const SiteFooter = () => {
 
                 {/* Contacto */} 
                 <Box className="footer-section">
-                <Typography variant="h6">CONTACTO</Typography>
-                <Box className="social-icons">
-                    <Link href="https://www.facebook.com/BukiExpress" style={{ color: '#39405C'}} className="icon"><FontAwesomeIcon icon={faFacebook}/></Link>
-                    <Link href="https://www.tiktok.com/@buki.express" style={{ color: '#39405C' }} className="icon" target="_blank">
-                        <FontAwesomeIcon icon={faTiktok}/>
-                    </Link>
-                    <Link href="https://api.whatsapp.com/message/IINJDTEPLSM6N1?autoload=1&app_absent=0" style={{ color: '#39405C'}} className="icon"><FontAwesomeIcon icon={faWhatsapp}/></Link>
-                    <Link href="mailto:bukiexpress2020@gmail.com" style={{ color: '#39405C'}} className="icon"><Email /></Link>
-                </Box>
+                    <Typography variant="h6">CONTACTO</Typography>
+                    <Box className="social-icons">
+                        <Link href="https://www.facebook.com/BukiExpress" style={{ color: '#39405C'}} className="icon"><FontAwesomeIcon icon={faFacebook}/></Link>
+                        <Link href="https://www.tiktok.com/@buki.express" style={{ color: '#39405C' }} className="icon" target="_blank">
+                            <FontAwesomeIcon icon={faTiktok}/>
+                        </Link>
+                        <Link href="https://api.whatsapp.com/send?phone=5217771094730" style={{ color: '#39405C'}} className="icon"><FontAwesomeIcon icon={faWhatsapp}/></Link>
+                        <Link href="tel:+527774829613" style={{ color: '#39405C'}} className="icon"><Call/></Link>
+                        <Link href="mailto:bukiexpress2020@gmail.com" style={{ color: '#39405C'}} className="icon"><Email /></Link>
+                    </Box>
                 </Box>
             </Box>
 
