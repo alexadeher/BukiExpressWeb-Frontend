@@ -79,11 +79,10 @@ const Home = () => {
 
       {/* Experiencia/envíos/eficiencia */}
       <Box className="feature-box" sx={{borderRadius: 3,
-                boxShadow: 2,
                 transition: "all 0.3s ease",
                 cursor: "pointer",
-                  transform: "translateY(-8px)",
-                  boxShadow: "0 8px 20px rgba(209, 215, 239, 1)",
+                transform: "translateY(-8px)",
+                boxShadow: "0 8px 20px rgba(209, 215, 239, 1)",
                 }}>
         <Grid container spacing={{ xs: 2, sm: 4, md: 8, lg: 10}} justifyContent='space-around'>
           <Grid item xs={12} sm={4}>
