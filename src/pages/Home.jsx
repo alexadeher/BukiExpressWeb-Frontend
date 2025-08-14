@@ -74,7 +74,6 @@ const Home = () => {
       <Box className="hero-section">
         <Typography className="hero-text">
           ¡Tu necesidad en tu destino!
-          cambio
         </Typography>
       </Box>
 
