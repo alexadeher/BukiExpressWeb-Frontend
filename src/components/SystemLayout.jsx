@@ -1,7 +1,7 @@
 
 import { useState } from "react"
 import { Outlet } from "react-router-dom"
-import Sidebar from "../components/SideBar.jsx"
+import Sidebar from "../components/Sidebar"
 import "../App.css"
 import { Menu } from "lucide-react"
 import useMediaQuery from "../hooks/useMediaQuery"
