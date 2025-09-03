@@ -32,7 +32,7 @@ const drawerLinks = [
 ];
 
 const Navbar = () => {
-    const { isMobile } = useResponsive();
+    const {isMobile} = useResponsive();
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     return (
@@ -75,21 +75,25 @@ const Navbar = () => {
                     </IconButton>
                 ) : (
                     <Button
-                    component={RouterLink}
-                    to="/login"
+                    //component={RouterLink}
+                    //to="/page-repartidores"
+                    href="https://forms.gle/cGyzZR8XwTxJDE4R6"
                     sx={{
                         backgroundColor: "#71C3F3",
                         color: "white",
                         borderRadius: "20px",
                         textTransform: "none",
-                        width: "150px",
-                        fontSize: "16px",
+                        width: "190px",
+                        height: "40px",
+                        fontSize: "13px",
+                        textAlign: "center",
                         "&:hover": {
                         backgroundColor: "#5BAED1",
                         },
                     }}
                     >
-                    Iniciar sesión
+                    {/*Iniciar sesión*/}
+                    Registrarse como repartidor
                     </Button>
                 )}
             </Toolbar>
@@ -100,7 +104,14 @@ const Navbar = () => {
         anchor="right"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        sx={{ width: 250, height: 350}}
+        PaperProps={{
+            sx: {
+            width: 250, // ancho
+            height: 165, // altura
+            top: 'auto', // evita que quede pegado arriba
+            borderRadius: "12px 0 0 12px" 
+            }
+        }}
         >
             <Box sx={{ width: 250 }} role="presentation">
                 <List>
@@ -119,7 +130,7 @@ const Navbar = () => {
                     </ListItemButton>
                     </ListItem>
                 ))}
-                <ListItem disablePadding>
+                {/*<ListItem disablePadding>
                     <ListItemButton
                     component={RouterLink}
                     to="/login"
@@ -133,7 +144,7 @@ const Navbar = () => {
                         primaryTypographyProps={{ fontWeight: 500 }}
                     />
                     </ListItemButton>
-                </ListItem>
+                </ListItem>*/}
                 </List>
             </Box>
         </Drawer>

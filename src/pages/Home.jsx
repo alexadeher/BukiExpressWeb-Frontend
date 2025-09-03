@@ -239,7 +239,7 @@ const Home = () => {
       </Box>
 
       {/* Únete a la familia */}
-      <Box className="join-section" sx={{backgroundColor: '#f6f6f6'}}>
+      <Box className="join-section">
         <Box className="join-header">
           <Typography className="subtitle">Únete a la familia</Typography>
           <Typography variant="h4" sx={{ fontWeight: 'bold', paddingBottom: '1.5rem' }}>

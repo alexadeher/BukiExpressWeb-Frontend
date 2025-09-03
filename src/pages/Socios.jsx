@@ -146,7 +146,7 @@ const Socios = () => {
                 gridTemplateColumns: { xs: "1fr", md: "1.5fr 1fr 1fr" },
                 gridTemplateRows: { xs: "auto", md: "repeat(2, 200px)" },
                 gap: 2,
-                p: 5
+                p: { xs: 2, md: 5 }
               }}
             >
               {/* Card grande */}
@@ -157,6 +157,8 @@ const Socios = () => {
                   borderRadius: 3,
                   color: "white",
                   p: 2,
+                  width: "100%", 
+                  minHeight: { xs: 250, md: "100%" },
                   background: "linear-gradient(135deg, #71C3F3, #25316D)",
                   display: "flex",
                   flexDirection: "column",
@@ -168,7 +170,7 @@ const Socios = () => {
                 }}
               >
                 <CardContent>
-                  <Typography variant="h5" fontWeight="bold" sx={{ mt: 2, fontSize: '1.9rem', textAlign: 'center' }}>
+                  <Typography variant="h5" fontWeight="bold" sx={{ mt: 2, fontSize: { xs: "1.2rem", md: "1.9rem" }, textAlign: 'center' }}>
                     En Buki Express llevamos oportunidades. Afiliar tu negocio con nosotros 
                     es la forma más fácil de vender más, 
                     sin complicaciones ni dolores de cabeza. Tú lo preparas, nosotros nos encargamos del resto.
@@ -184,6 +186,8 @@ const Socios = () => {
                   flexDirection: "column",
                   justifyContent: "space-between",
                   p: 2,
+                  width: "100%",
+                  minHeight: { xs: 180, md:  "100%"},
                   backgroundColor: '#AFDDFF',
                   boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
                   "&:hover": {
