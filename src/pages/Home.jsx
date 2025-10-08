@@ -170,7 +170,7 @@ const Home = () => {
                         {service.icon}
                       </Box>
                       <Typography variant="subtitle1" sx={{color: '#25316D', fontWeight: 'bold', fontSize: '25px'}}>{service.label}</Typography>
-                      <Link href="https://api.whatsapp.com/message/IINJDTEPLSM6N1?autoload=1&app_absent=0" 
+                      <Link href="https://wa.me/message/IINJDTEPLSM6N1" 
                         sx={{
                           color: '#FF9149',
                           padding: '10px 30px',
