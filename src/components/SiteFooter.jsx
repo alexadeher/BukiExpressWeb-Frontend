@@ -45,7 +45,7 @@ const SiteFooter = () => {
                         <Link href="https://www.tiktok.com/@buki.express" style={{ color: '#39405C' }} className="icon" target="_blank">
                             <FontAwesomeIcon icon={faTiktok}/>
                         </Link>
-                        <Link href="https://api.whatsapp.com/send?phone=5217771094730" style={{ color: '#39405C'}} className="icon"><FontAwesomeIcon icon={faWhatsapp}/></Link>
+                        <Link href="https://wa.me/message/IINJDTEPLSM6N1" style={{ color: '#39405C'}} className="icon"><FontAwesomeIcon icon={faWhatsapp}/></Link>
                         <Link href="tel:+527774829613" style={{ color: '#39405C'}} className="icon"><Call/></Link>
                         <Link href="mailto:bukiexpress2020@gmail.com" style={{ color: '#39405C'}} className="icon"><Email /></Link>
                     </Box>
